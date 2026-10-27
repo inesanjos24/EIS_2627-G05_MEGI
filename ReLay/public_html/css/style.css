@@ -1309,3 +1309,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .team-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
 @media (max-width: 1080px) { .team-grid.cols-3 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .team-grid.cols-3 { grid-template-columns: 1fr; } }
+
+/* sections reached by scrolling (menu links, accepting an order) stop below the sticky top bar */
+.card { scroll-margin-top: 90px; }

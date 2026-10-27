@@ -393,9 +393,13 @@
     var flow = $("[data-status-flow]");
     if (!flow) { return null; }
 
-    var orderNo = flow.getAttribute("data-order");
     var state = "initiated";          // initiated → progress → completed | cancelled
     var note = $("[data-status-note]");
+    var card = flow.closest(".card");
+    var title = $(".card-title", card);
+    var details = $all(".kv dd", card);   // origin, destination, products, client, distance
+    var capacityBox = $("[data-capacity]");
+    var mapEl = $(".leaflet-map");
     var buttons = {
       start: $('[data-status-action="start"]'),
       complete: $('[data-status-action="complete"]'),
@@ -407,12 +411,25 @@
       final: $('[data-step="final"]', flow)
     };
 
-    var NOTES = {
-      initiated: "Order accepted. Press <strong>Start delivery</strong> when you collect the products.",
-      progress: "Delivery in progress. To complete it, submit the proof of delivery (e-POD) below.",
-      completed: "Order #" + orderNo + " completed with e-POD. It now appears in your completed orders and in the client's order history.",
-      cancelled: "Order #" + orderNo + " cancelled and returned to the available orders list (attempt 2)."
+    /* The order (or consolidated route) shown in the card.
+       The first one, #1042, is written in the HTML; the next ones are
+       loaded from the "Available orders" table when the courier accepts them. */
+    var firstNo = flow.getAttribute("data-order");
+    var current = {
+      label: "Order #" + firstNo,
+      numbers: [firstNo],
+      destinations: [mapEl ? mapEl.getAttribute("data-dest-label") : "—"],
+      rows: null          // table rows it came from (null = the order written in the HTML)
     };
+
+    function notes(key) {
+      return {
+        initiated: current.label + " accepted. Press <strong>Start delivery</strong> when you collect the products.",
+        progress: "Delivery in progress. To complete it, submit the proof of delivery (e-POD) below.",
+        completed: current.label + " completed with e-POD. It now appears in your completed orders and in the client's order history.",
+        cancelled: current.label + " cancelled and returned to the available orders list."
+      }[key];
+    }
 
     function setStep(el, kind, label) {
       el.className = "badge badge-" + kind;
@@ -422,11 +439,11 @@
 
     function render() {
       var order = ["initiated", "progress", "final"];
-      var current = state === "completed" || state === "cancelled" ? "final" : state;
+      var now = state === "completed" || state === "cancelled" ? "final" : state;
       order.forEach(function (key) {
         var label = key === "initiated" ? "Initiated" : key === "progress" ? "In Progress" : "Completed / Cancelled";
         var pos = order.indexOf(key);
-        var cur = order.indexOf(current);
+        var cur = order.indexOf(now);
         if (key === "final" && state === "completed") { setStep(steps.final, "green", "Completed"); return; }
         if (key === "final" && state === "cancelled") { setStep(steps.final, "red", "Cancelled"); return; }
         if (pos < cur) { setStep(steps[key], "green", label); }
@@ -440,9 +457,27 @@
       // the vehicle can't change while the delivery is on the road
       if (vehicleSelect) { vehicleSelect.disabled = state === "progress"; }
       if (note) {
-        note.innerHTML = NOTES[state];
-        note.className = "note " + (state === "completed" ? "note-green" : state === "cancelled" ? "note-amber" : state === "progress" ? "note-blue" : "note-amber");
+        note.innerHTML = notes(state);
+        note.className = "note " + (state === "completed" ? "note-green" : state === "progress" ? "note-blue" : "note-amber");
       }
+    }
+
+    // "41.1780, −8.5980 (FEUP)"
+    function place(point, name) {
+      return (point[0].toFixed(4) + ", " + point[1].toFixed(4)).replace(/-/g, "−") + " (" + name + ")";
+    }
+
+    // A cancelled order goes back to the top of the list with one more attempt (ER: Order.attempt)
+    function returnToList(row) {
+      var body = $("#available-body");
+      if (!body) { return; }
+      var attempt = Number(row.getAttribute("data-attempt") || 1) + 1;
+      var no = $("input", row).value;
+      row.setAttribute("data-attempt", attempt);
+      row.cells[1].innerHTML = "#" + no + ' <small class="text-muted">(attempt ' + attempt + ")</small>";
+      $("input", row).checked = false;
+      row.classList.add("row-new");
+      body.insertBefore(row, body.firstChild);
     }
 
     buttons.start.addEventListener("click", function () {
@@ -468,12 +503,23 @@
       state = "cancelled";
       render();
       // statement: "Upon cancellation, the order returns to the list of orders"
-      var body = $("#available-body");
-      if (body) {
-        body.insertAdjacentHTML("afterbegin",
-          '<tr class="row-new" data-weight="' + flow.getAttribute("data-weight") + '" data-volume="' + flow.getAttribute("data-volume") + '">' +
-          '<td><input type="checkbox" name="orders" value="' + orderNo + '" aria-label="Select order ' + orderNo +
-          '" class="accent-blue"></td><td>#' + orderNo + " <small class=\"text-muted\">(attempt 2)</small></td><td>FEUP → Av. dos Aliados</td><td>2 items</td><td>4.5 kg • 0.030 m³</td></tr>");
+      if (current.rows) {
+        current.rows.slice().reverse().forEach(returnToList);
+      } else if (mapEl) {
+        // the first order (#1042) wasn't in the table: build its row from the card
+        var row = document.createElement("tr");
+        row.setAttribute("data-weight", flow.getAttribute("data-weight"));
+        row.setAttribute("data-volume", flow.getAttribute("data-volume"));
+        row.setAttribute("data-items", "2");
+        row.setAttribute("data-origin", mapEl.getAttribute("data-origin"));
+        row.setAttribute("data-dest", mapEl.getAttribute("data-dest"));
+        row.setAttribute("data-from", mapEl.getAttribute("data-origin-label"));
+        row.setAttribute("data-to", mapEl.getAttribute("data-dest-label"));
+        row.setAttribute("data-client", details[3] ? details[3].textContent : "");
+        row.innerHTML = '<td><input type="checkbox" name="orders" value="' + firstNo + '" aria-label="Select order ' + firstNo +
+          '" class="accent-blue"></td><td>#' + firstNo + "</td><td>" + escapeHtml(row.getAttribute("data-from") + " → " + row.getAttribute("data-to")) +
+          "</td><td>2 items</td><td>" + flow.getAttribute("data-weight") + " kg • " + Number(flow.getAttribute("data-volume")).toFixed(3) + " m³</td>";
+        returnToList(row);
       }
     });
 
@@ -481,15 +527,67 @@
 
     return {
       state: function () { return state; },
+      label: function () { return current.label; },
+
+      // Show accepted order(s) in the card: one order, or several consolidated into one route
+      load: function (rows) {
+        var kg = 0, m3 = 0, items = 0, pickups = [], drops = [], from = [], to = [], clients = [];
+        rows.forEach(function (r) {
+          kg += Number(r.getAttribute("data-weight"));
+          m3 += Number(r.getAttribute("data-volume"));
+          items += Number(r.getAttribute("data-items") || 1);
+          pickups.push(r.getAttribute("data-origin").split(",").map(Number));
+          drops.push(r.getAttribute("data-dest").split(",").map(Number));
+          from.push(r.getAttribute("data-from"));
+          to.push(r.getAttribute("data-to"));
+          var c = r.getAttribute("data-client");
+          if (c && clients.indexOf(c) < 0) { clients.push(c); }
+        });
+        var numbers = rows.map(function (r) { return $("input", r).value; });
+        current = {
+          label: rows.length > 1 ? "Route #" + numbers.join(" + #") : "Order #" + numbers[0],
+          numbers: numbers,
+          destinations: to,
+          rows: rows
+        };
+
+        title.textContent = current.label;
+        flow.setAttribute("data-order", numbers.join(", #"));
+        flow.setAttribute("data-weight", kg);
+        flow.setAttribute("data-volume", m3);
+        if (capacityBox) {
+          capacityBox.setAttribute("data-weight", kg);
+          capacityBox.setAttribute("data-volume", m3);
+        }
+        if (details.length >= 4) {
+          details[0].textContent = rows.length > 1 ? from.join(" • ") : place(pickups[0], from[0]);
+          details[1].textContent = rows.length > 1 ? to.join(" • ") : place(drops[0], to[0]);
+          details[2].textContent = items + (items === 1 ? " item" : " items") + " • " + fmt(kg, 2) + " kg • " + m3.toFixed(3) + " m³";
+          details[3].textContent = clients.join(", ") || "—";
+        }
+        // new route on the map: all pick-ups first, then all drop-offs
+        if (mapEl && mapEl.relaySetRoute) {
+          mapEl.relaySetRoute(pickups.concat(drops), from[0], to[to.length - 1]);
+        }
+
+        state = "initiated";
+        render();
+        showCapacity();
+        card.scrollIntoView({ behavior: "smooth", block: "start" });
+      },
+
       complete: function (proof) {
         state = "completed";
         render();
         var body = $("#completed-body");
         var v = selectedVehicle();
-        if (body) {
+        if (!body) { return; }
+        // one line per order (a consolidated route has several)
+        for (var i = current.numbers.length - 1; i >= 0; i--) {
           body.insertAdjacentHTML("afterbegin",
-            '<tr class="row-new"><td>#' + orderNo + "</td><td>" + today() + "</td><td>Av. dos Aliados, Porto</td><td>" +
-            escapeHtml(v ? v.type + " • " + v.license_plate : "—") + "</td><td>" + proof + '</td><td><span class="badge badge-green">Completed</span></td></tr>');
+            '<tr class="row-new"><td>#' + current.numbers[i] + "</td><td>" + today() + "</td><td>" + escapeHtml(current.destinations[i] || "—") +
+            "</td><td>" + escapeHtml(v ? v.type + " • " + v.license_plate : "—") + "</td><td>" + proof +
+            '</td><td><span class="badge badge-green">Completed</span></td></tr>');
         }
       }
     };
@@ -518,9 +616,10 @@
     }
     epodForm.addEventListener("relay:valid", function (e) {
       var hasSignature = signature && signature.isSigned();
-      var flow = $("[data-status-flow]");
-      if (courier) { courier.complete(hasSignature ? "Signature" : "Photo"); }
-      e.detail.message = "Proof of delivery submitted. Order #" + (flow ? flow.getAttribute("data-order") : "") + " is now Completed.";
+      if (courier) {
+        courier.complete(hasSignature ? "Signature" : "Photo");
+        e.detail.message = "Proof of delivery submitted. " + courier.label() + " is now Completed.";
+      }
       if (signature) { signature.clear(); }
     });
   }
@@ -557,7 +656,10 @@
       var picked = checkedRows().map(function (r) { return "#" + $("input", r).value; });
       var action = e.detail.submitter ? e.detail.submitter.value : "accept";
       var v = selectedVehicle();
-      checkedRows().forEach(function (r) { r.remove(); });
+      var rows = checkedRows();
+      rows.forEach(function (r) { r.remove(); r.classList.remove("row-new"); });
+      // the accepted order(s) become the active order shown at the top of the page
+      if (courier) { courier.load(rows); }
       e.detail.message = (action === "consolidate"
         ? "Orders " + picked.join(", ") + " consolidated into one route"
         : "Order " + picked[0] + " accepted as your active order") +

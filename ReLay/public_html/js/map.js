@@ -12,6 +12,12 @@
                                            inputs that move the points
    Route info (distance, names, coordinates) is written into elements
    with data-field="..." inside a [data-route-info] block in the same card.
+
+   Other scripts can draw a new route on a map (e.g. when the courier
+   accepts an order or consolidates several into one route):
+     mapElement.relaySetRoute([[lat,lng], [lat,lng], ...], "From", "To")
+   The route goes through every point in order; the points in the
+   middle are shown as small grey stops.
    ========================================================= */
 (function () {
   "use strict";
@@ -98,8 +104,15 @@
     var line = L.polyline([origin, dest], { color: BLUE, weight: 4, opacity: 0.9 }).addTo(map);
     var originMarker = makeMarker(origin, ORANGE, "Origin: " + originLabel).addTo(map);
     var destMarker = makeMarker(dest, BLUE, "Destination: " + destLabel).addTo(map);
+    var stops = L.layerGroup().addTo(map);   // intermediate stops of a consolidated route
+    var waypoints = null;                    // null = just origin -> destination
 
     var requestId = 0;
+
+    // all the points of the route, in order
+    function routePoints() {
+      return waypoints || [originMarker.getLatLng(), destMarker.getLatLng()];
+    }
 
     function setField(name, value) {
       if (!info) { return; }
@@ -107,24 +120,25 @@
       if (node) { node.textContent = value; }
     }
 
-    function showStraightLine(o, d) {
-      line.setLatLngs([o, d]);
+    function showStraightLine(points) {
+      var meters = 0;
+      for (var i = 1; i < points.length; i++) { meters += points[i - 1].distanceTo(points[i]); }
+      line.setLatLngs(points);
       line.setStyle({ dashArray: "6 8" });
-      setField("distance", formatKm(o.distanceTo(d) / 1000));
+      setField("distance", formatKm(meters / 1000));
       setField("distance-note", "km (straight line)");
     }
 
     function drawRoute() {
-      var o = originMarker.getLatLng();
-      var d = destMarker.getLatLng();
+      var points = routePoints();
 
-      map.fitBounds(L.latLngBounds([o, d]), { padding: [50, 50], maxZoom: 15 });
-      showStraightLine(o, d);
+      map.fitBounds(L.latLngBounds(points), { padding: [50, 50], maxZoom: 15 });
+      showStraightLine(points);
 
-      // Ask OSRM for the road route; ignore answers to older requests
+      // Ask OSRM for the road route through every point; ignore answers to older requests
       var id = ++requestId;
       if (!window.fetch) { return; }
-      var url = OSRM + o.lng + "," + o.lat + ";" + d.lng + "," + d.lat +
+      var url = OSRM + points.map(function (p) { return p.lng + "," + p.lat; }).join(";") +
                 "?overview=full&geometries=geojson";
 
       fetch(url)
@@ -141,6 +155,26 @@
         })
         .catch(function () { /* offline: keep the straight line */ });
     }
+
+    // New route from another script: [[lat,lng], ...] going through every point
+    el.relaySetRoute = function (list, fromName, toName) {
+      var points = list.map(function (p) { return L.latLng(p[0], p[1]); });
+      if (points.length < 2) { return; }
+      waypoints = points;
+      originLabel = fromName || "Origin";
+      destLabel = toName || "Destination";
+      start = { origin: points[0], dest: points[points.length - 1] };
+      originMarker.setLatLng(points[0]).setTooltipContent("Origin: " + originLabel);
+      destMarker.setLatLng(points[points.length - 1]).setTooltipContent("Destination: " + destLabel);
+      stops.clearLayers();
+      points.slice(1, -1).forEach(function (p, i) {
+        L.circleMarker(p, { radius: 6, color: "#ffffff", weight: 2, fillColor: "#6b7280", fillOpacity: 1 })
+          .bindTooltip("Stop " + (i + 1), { direction: "top" })
+          .addTo(stops);
+      });
+      el.setAttribute("aria-label", "Map of the route from " + originLabel + " to " + destLabel);
+      drawRoute();
+    };
 
     function refreshLabels() {
       var o = originMarker.getLatLng();
@@ -163,6 +197,7 @@
     function readInputs() {
       var vals = inputs.map(function (inp) { return parseFloat(inp.value.replace(",", ".")); });
       if (!isValid(vals[0], vals[1]) || !isValid(vals[2], vals[3])) { return; }
+      waypoints = null;
       originMarker.setLatLng([vals[0], vals[1]]);
       destMarker.setLatLng([vals[2], vals[3]]);
       refreshLabels();
