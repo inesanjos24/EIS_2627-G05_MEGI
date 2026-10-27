@@ -49,7 +49,25 @@
                     <!-- Document alerts for this courier's vehicles  -->
                     <div class="page-alerts" data-render="courier-alerts" data-courier="João Silva" aria-live="polite"></div>
 
-                    <!-- to finshihhi -->
+                    <!-- ===== Courier header + active vehicle (statement: "Active vehicle selector") ===== -->
+                    <section class="card profile-head">
+                        <span class="avatar lg"></span>
+                        <div>
+                            <h2>João Silva <span class="badge badge-green">✓ Account validated by Staff</span></h2>
+                            <p>NIF 245 678 901 &nbsp;•&nbsp; +351 912 345 678 &nbsp;•&nbsp; joao.silva@email.pt</p>
+                        </div>
+                        <div class="actions">
+                            <div class="minw-260 field">
+                                <label for="vehicle">Active vehicle</label>
+                                <!-- the options are created by app.js from data.js only vehicles approved by Staff with valid documents can be chosen -->
+                                <select class="bg-white border-blue select" id="vehicle" name="vehicle" data-courier="João Silva">
+                                    <option value="">Loading vehicles…</option>
+                                </select>
+                                <span class="text-xs text-muted hint">Only vehicles approved by Staff with valid documents can be used</span>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- to do nextttt -->
 
                 </main>
             </div>
