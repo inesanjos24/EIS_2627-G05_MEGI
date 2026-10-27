@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"><!-- comment -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Group 05 — Enterprise Information Systems 2026/2027, FEUP">
+        <title>Active order-ReLay</title>
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <!-- Stylesheet from Leaflet -->
+        <link rel="stylesheet" href="js/leaflet/leaflet.css">
+        <link rel="stylesheet" href="css/style.css">
+        
+
+        
+    </head>
+    
+    <body>
+        <div class="app">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <a href="index.html" class="logo">
+                  <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>  
+                  <span class="logo-text">Re<span>lay</span></span>                  
+                </a>
+                <nav class="side-nav">
+                    <a href="courier-active-order.html#available">Available orders</a>
+                    <a href="courier-active-order.html" class="active">Active order</a>
+                    <a href="courier-active-order.html#completed">Completed orders</a>
+                    <a href="courier-vehicles.html">My vehicles</a>
+                    <a href="courier-profile.html">Profile</a>
+                </nav>
+                <a href="login.html" class="logout">← Log out</a>
+            </aside>
+            
+            <div class="main">
+                <!--Top bar-->
+                <header class="topbar">
+                    <h1>Active order</h1>
+                    <div class="user-box">
+                        <span class="alerts-pill" data-alerts-for="João Silva">alerts</span>
+                        <span class="avatar"></span>
+                        <span class="who"><strong>João Silva</strong><small>Courier</small></span>
+                    </div>
+                </header>
+                <main class="content">
+                    <!-- Document alerts for this courier's vehicles  -->
+                    <div class="page-alerts" data-render="courier-alerts" data-courier="João Silva" aria-live="polite"></div>
+
+                    <!-- to finshihhi -->
+
+                </main>
+            </div>
+        </div>
+        <!-- Scripts at the end of <body>, so the HTML is loaded first -->
+        <script src="js/leaflet/leaflet.js"></script>
+        <script src="js/map.js"></script>
+        <script src="js/data.js"></script>
+        <script src="js/validation.js"></script>
+        <script src="js/app.js"></script>
+    </body>        
+            
+  
+</html>

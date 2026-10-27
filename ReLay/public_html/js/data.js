@@ -1,19 +1,14 @@
 /* =========================================================
-   Relay — sample test data (Sprint 1, no database yet)
+   Relay — sample test data (without database)
    ---------------------------------------------------------
-   The statement asks for "HTML/CSS/JS source code with sample
-   test data". Data that pages render with JavaScript lives here,
-   using the JavaScript lesson's data types: objects, arrays,
+   It asks for "HTML/CSS/JS source code with sample
+   test data". Data that pages render with JavaScript: objects, arrays,
    numbers, strings and the Date object.
 
    Document dates are calculated FROM TODAY, so the alerts are
-   always meaningful when the professor opens the prototype
+   always meaningful
    (an expired insurance stays expired, an inspection always
-   expires "in 2 days", etc.).
-
-   In Sprint 2 these arrays are replaced by PHP + database
-   queries; the entity and attribute names already match the
-   ER model (Vehicle, Vehicle_Type, User...).
+   expires "in 2 days".....
    ========================================================= */
 (function () {
   "use strict";
