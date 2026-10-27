@@ -49,7 +49,7 @@
                     <!-- Document alerts for this courier's vehicles  -->
                     <div class="page-alerts" data-render="courier-alerts" data-courier="João Silva" aria-live="polite"></div>
 
-                    <!-- ===== Courier header + active vehicle (statement: "Active vehicle selector") ===== -->
+                    <!-- Courier header + active vehicle (statement: "Active vehicle selector")-->
                     <section class="card profile-head">
                         <span class="avatar lg"></span>
                         <div>
@@ -67,7 +67,55 @@
                             </div>
                         </div>
                     </section>
-                    <!-- to do nextttt -->
+                    <!--Map + order-->
+                    <section class="grid-main-side">
+
+                        <!-- Map (statement 2.2: Leaflet.js + OpenStreetMap, marker on FEUP) -->
+                        <section class="card">
+                            <h2 class="card-title">Route on map</h2>
+                            <div class="map leaflet-map"
+                                    data-origin="41.1780,-8.5980" data-dest="41.1496,-8.6110"
+                                    data-origin-label="FEUP" data-dest-label="Av. dos Aliados"
+                                    data-inputs=""
+                                    role="region" aria-label="Map of the route of order 1042, from FEUP to Avenida dos Aliados">
+                                <noscript>Turn on JavaScript to see the map.</noscript>
+                            </div>
+                        </section>
+
+                        <!-- Active order -->
+                        <section class="card">
+                            <h2 class="card-title">Order #1042</h2>
+                            <dl class="kv" data-route-info>
+                                <dt>Origin</dt><dd>41.1780, −8.5980 (FEUP)</dd>
+                                <dt>Destination</dt><dd>41.1496, −8.6110 (Av. dos Aliados)</dd>
+                                <dt>Products</dt><dd>2 items • 4.5 kg • 0.030 m³</dd>
+                                <dt>Client</dt><dd>Ana Ferreira</dd>
+                                <dt>Distance</dt><dd><span data-field="distance">–</span> <span data-field="distance-note">km</span></dd>
+                            </dl>
+
+                            <!-- load vs. capacity of the active vehicle physical load constraints -->
+                            <div class="capacity" data-capacity data-weight="4.5" data-volume="0.03">
+                                <div class="meter" aria-hidden="true"><span></span></div>
+                                <span data-capacity-text>Checking vehicle capacity…</span>
+                            </div>
+
+                            <!-- Sequential status: Initiated -> In Progress -> Completed / Cancelled -->
+                            <p class="mt-14 label">Order status</p>
+                            <div class="status-flow" data-status-flow data-order="1042" data-weight="4.5" data-volume="0.03">
+                                <span class="badge badge-blue" data-step="initiated"><span class="dot"></span>Initiated</span> →
+                                <span class="badge badge-gray" data-step="progress">In Progress</span> →
+                                <span class="badge badge-gray" data-step="final">Completed / Cancelled</span>
+                            </div>
+                            <div class="mt-0 form-actions">
+                                <button type="button" class="btn btn-primary" data-status-action="start">Start delivery</button>
+                                <button type="button" class="btn btn-primary" data-status-action="complete" disabled>Complete delivery</button>
+                                <button type="button" class="btn btn-danger" data-status-action="cancel">Cancel</button>
+                            </div>
+                            <p class="mt-14 note note-amber" data-status-note>Order accepted. Press <strong>Start delivery</strong> when you collect the products.</p>
+                        </section>
+                    </section>
+
+        <!-- add the proof of delivery (e-pod) with signature and all -->
 
                 </main>
             </div>
