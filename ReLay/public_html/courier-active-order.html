@@ -115,7 +115,92 @@
                         </section>
                     </section>
 
-        <!-- add the proof of delivery (e-pod) with signature and all -->
+                    <!-- add the proof of delivery (e-pod) with client signature and all -->
+                    <form class="card" id="epod" action="courier-active-order.html#completed" method="post" data-success="Proof of delivery submitted.">
+                        <h2 class="card-title">Proof of delivery (e-POD)-required to complete order</h2>
+                        <div class="epod-grid">
+
+                            <!-- Option 1: signature drawn on a <canvas> -->
+                            <div>
+                                <p class="label">Digital signature (Canvas)</p>
+                                <div class="signature-wrap">
+                                    <canvas class="signature-pad" id="signature" aria-label="Signature area: draw with the mouse or a finger"></canvas>
+                                    <span class="signature-placeholder" aria-hidden="true">Sign here with your mouse or finger</span>
+                                </div>
+                                <button type="button" class="mt-10 btn btn-outline" id="clear-signature">Clear signature</button>
+                            </div>
+
+                            <span class="or">or</span>
+
+                            <!-- Option 2: delivery photo (check again!!!)-->
+                            <div>
+                                <p class="label">Delivery photo</p>
+                                <label class="dropzone photo-drop" for="epod-photo">
+                                    <input type="file" id="epod-photo" name="photo" accept="image/*">
+                                    <span class="dz-text">Drag or click to upload a photo</span>
+                                </label>
+                                <label class="mt-10 btn btn-outline" for="epod-photo">Choose file</label>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-orange">Submit proof and complete delivery</button>
+                        </div>
+                    </form>
+                    
+                    <!-- orders available one or more routes -->
+                    <form class="card" id="available" action="courier-active-order.html" method="post" data-success="Done.">
+                        <h2 class="card-title">Available orders</h2>
+                        <p class="card-sub">Single active task rule: accept 1 order, or select several to consolidate them into one route. The total load must fit your active vehicle.</p>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr><th></th><th>No.</th><th>Origin → Destination</th><th>Products</th><th>Weight / Volume</th></tr>
+                                </thead>
+                                <tbody id="available-body">
+                                    <tr data-weight="6.0" data-volume="0.05">
+                                        <td><input class="accent-blue" type="checkbox" name="orders" value="1043" aria-label="Select order 1043"></td>
+                                        <td>#1043</td><td>Rua Dr. Roberto Frias → Av. dos Aliados</td><td>3 items</td><td>6.0 kg • 0.050 m³</td>
+                                    </tr>
+                                    <tr data-weight="1.2" data-volume="0.01">
+                                        <td><input class="accent-blue" type="checkbox" name="orders" value="1044" aria-label="Select order 1044"></td>
+                                        <td>#1044</td><td>FEUP → Campo Alegre</td><td>1 item</td><td>1.2 kg • 0.010 m³</td>
+                                    </tr>
+                                    <tr data-weight="12.5" data-volume="0.1">
+                                        <td><input class="accent-blue" type="checkbox" name="orders" value="1045" aria-label="Select order 1045"></td>
+                                        <td>#1045</td><td>Boavista → Gaia (Cais)</td><td>2 items</td><td>12.5 kg • 0.100 m³</td>
+                                    </tr>
+                                    <tr data-weight="420" data-volume="2.4">
+                                        <td><input class="accent-blue" type="checkbox" name="orders" value="1046" aria-label="Select order 1046"></td>
+                                        <td>#1046</td><td>Maia, Zona Industrial → Matosinhos</td><td>1 item (furniture)</td><td>420 kg • 2.400 m³</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" name="action" value="accept" class="btn btn-primary">Accept order</button>
+                            <button type="submit" name="action" value="consolidate" class="btn btn-outline">Consolidate selected into a route</button>
+                        </div>
+                    </form>
+
+                    <!--View completed orders-->
+                    <section class="card" id="completed">
+                        <h2 class="card-title">Completed orders</h2>
+                        <div class="table-wrap">
+                            <table class="table">
+                                <thead>
+                                    <tr><th>No.</th><th>Date</th><th>Destination</th><th>Vehicle</th><th>e-POD</th><th>Status</th></tr>
+                                </thead>
+                                <tbody id="completed-body">
+                                    <tr><td>#1038</td><td>02/10/2026</td><td>Av. dos Aliados, Porto</td><td>Van • AA-12-BC</td><td>Signature</td><td><span class="badge badge-green">Completed</span></td></tr>
+                                    <tr><td>#1033</td><td>18/09/2026</td><td>Matosinhos Sul</td><td>Moto • 45-ZZ-11</td><td>—</td><td><span class="badge badge-red">Cancelled</span></td></tr>
+                                    <tr><td>#1024</td><td>05/09/2026</td><td>Vila Nova de Gaia</td><td>Van • AA-12-BC</td><td>Signature</td><td><span class="badge badge-green">Completed</span></td></tr>
+                                    <tr><td>#1003</td><td>06/08/2026</td><td>Foz do Douro, Porto</td><td>Van • AA-12-BC</td><td>Signature</td><td><span class="badge badge-green">Completed</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section> <!<!-- CORRIGIR ORDER 142 NAO SAI DE LA -->
+                    
+                    
 
                 </main>
             </div>
