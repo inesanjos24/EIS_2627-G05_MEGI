@@ -57,7 +57,120 @@
           </div>
         </section>
 
-        <!-- next next -->
+        <!--TO update a certificate: the staff receives a notifification-->
+        <form class="card" id="update-docs" action="courier-vehicles.html" method="post" enctype="multipart/form-data">
+          <h2 class="card-title">Update vehicle documents</h2>
+          <p class="card-sub">Upload the renewed insurance or inspection certificate before it expires. Staff is alerted to review it.</p>
+          <div class="form-grid cols-4">
+            <div class="field">
+              <label for="upd-vehicle">Vehicle *</label>
+              <select class="select" id="upd-vehicle" name="license_plate" data-render="courier-vehicle-options" data-courier="João Silva" required>
+                <option value="">Choose a vehicle</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="upd-doc">Document *</label>
+              <select class="select" id="upd-doc" name="document" required>
+                <option value="">Choose</option>
+                <option value="insurance">Insurance certificate</option>
+                <option value="inspection">Inspection certificate</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="upd-date">New expiry date *</label>
+              <input class="input" type="date" id="upd-date" name="expiry_date" data-future required>
+            </div>
+            <div class="field">
+              <label for="upd-file">Certificate file *</label>
+              <input class="input" type="file" id="upd-file" name="document_file" accept=".pdf,.jpg,.jpeg" required data-error="Upload the certificate (PDF or JPG)">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Upload certificate</button>
+            <button type="reset" class="btn btn-ghost">Cancel</button>
+          </div>
+        </form>
+
+        <!--TO register a new vehicle:registered by couriers and audited by staff-->
+        <form class="card" id="vehicle-form" action="courier-vehicles.html" method="post" enctype="multipart/form-data" data-courier="João Silva">
+          <h2 class="card-title">Register a new vehicle</h2>
+          <p class="card-sub">The vehicle can only be used for orders after Staff verifies its insurance and inspection certificates.</p>
+
+          <h3 class="text-14 mb-10 label">Vehicle details</h3>
+          <div class="form-grid cols-3">
+            <div class="field">
+              <label for="plate">Licence plate *</label>
+              <input class="input" id="plate" name="license_plate" placeholder="AB-34-CD"
+                     pattern="[A-Za-z0-9]{2}-[A-Za-z0-9]{2}-[A-Za-z0-9]{2}"
+                     data-error="Use the Portuguese format, e.g. AB-34-CD" required>
+            </div>
+            <div class="field">
+              <label for="model">Model *</label>
+              <input class="input" id="model" name="model" placeholder="e.g. Renault Kangoo" required>
+            </div>
+            <div class="field">
+              <label for="type">Vehicle type *</label>
+              <select class="select" id="type" name="vehicle_type" required>
+                <option value="">Choose</option>
+                <option>Bike</option>
+                <option>Moto</option>
+                <option>Van</option>
+                <option>Truck</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-14 form-grid">
+            <div class="field">
+              <label for="max-weight">Max weight *</label>
+              <div class="input-wrap">
+                <input class="input" type="number" id="max-weight" name="max_weight_kg" placeholder="e.g. 750" min="0" step="any" data-gt="0" required>
+                <span class="suffix">kg</span>
+              </div>
+              <span class="hint">Limits by type: Bike 15 kg • Moto 30 kg • Van 800 kg • Truck 3500 kg</span>
+            </div>
+            <div class="field">
+              <label for="max-volume">Max volume *</label>
+              <div class="input-wrap">
+                <input class="input" type="number" id="max-volume" name="max_vol_m3" placeholder="e.g. 4.5" min="0" step="any" data-gt="0" required>
+                <span class="suffix">m³</span>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="text-14 mt-20 mb-10 label">Documents</h3>
+          <div class="form-grid">
+            <div>
+              <p class="text-13 label">Insurance certificate</p>
+              <div class="field">
+                <label for="ins-date">Expiry date *</label>
+                <input class="input" type="date" id="ins-date" name="insurance_expiry_date" data-future required>
+              </div>
+              <label class="mt-10 dropzone">
+                <input type="file" name="insurance_expiry_doc" accept=".pdf,.jpg,.jpeg" required data-error="Upload the insurance certificate (PDF or JPG)">
+                <span class="dz-text">Drag or click to upload (PDF, JPG)</span>
+              </label>
+            </div>
+            <div>
+              <p class="text-13 label">Inspection certificate</p>
+              <div class="field">
+                <label for="insp-date">Expiry date *</label>
+                <input class="input" type="date" id="insp-date" name="inspection_expiry_date" data-future required>
+              </div>
+              <label class="mt-10 dropzone">
+                <input type="file" name="inspection_expiry_doc" accept=".pdf,.jpg,.jpeg" required data-error="Upload the inspection certificate (PDF or JPG)">
+                <span class="dz-text">Drag or click to upload (PDF, JPG)</span>
+              </label>
+            </div>
+          </div>
+
+          <p class="mt-14 note note-blue">After submitting, Staff receives an alert to review the documents. You will be notified when the vehicle is approved.</p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Submit for approval</button>
+            <button type="reset" class="btn btn-ghost">Cancel</button>
+          </div>
+        </form>
 
       </main>
     </div>
