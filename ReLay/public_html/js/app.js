@@ -295,8 +295,10 @@
     $all('[data-render="courier-alerts"]').forEach(function (box) {
       var alerts = buildAlerts(courierVehicles(box.getAttribute("data-courier")), true);
       box.innerHTML = alerts.map(function (a) {
-        return alertRow(a, '<a href="courier-vehicles.html#update-docs" class="btn btn-sm ' +
-          (a.level === "red" ? "btn-danger" : "btn-amber") + '">Upload new certificate</a>');
+        // the link says which vehicle and document, so the form opens already filled in
+        return alertRow(a, '<a href="courier-vehicles.html?plate=' + encodeURIComponent(a.vehicle.license_plate) +
+          "&doc=" + a.doc + '#update-docs" data-prefill-plate="' + a.vehicle.license_plate + '" data-prefill-doc="' + a.doc +
+          '" class="btn btn-sm ' + (a.level === "red" ? "btn-danger" : "btn-amber") + '">Upload new certificate</a>');
       }).join("");
     });
 
@@ -844,6 +846,35 @@
   }
 
   var updateForm = $("#update-docs");
+
+  /* "Upload new certificate" in an alert fills in the vehicle and the document,
+     so the courier only has to pick the new date and the file.
+     - from another page: the values come in the URL (?plate=45-ZZ-11&doc=inspection)
+     - on this page: the click is handled here, without reloading */
+  function prefillUpdate(plate, doc) {
+    if (!updateForm || !findVehicle(plate)) { return; }
+    $("#upd-vehicle").value = plate;
+    if (doc === "insurance" || doc === "inspection") { $("#upd-doc").value = doc; }
+    V.clearError($("#upd-vehicle"));
+    V.clearError($("#upd-doc"));
+    updateForm.scrollIntoView({ behavior: "smooth", block: "start" });
+    updateForm.classList.add("highlight");
+    setTimeout(function () { updateForm.classList.remove("highlight"); }, 1500);
+    $("#upd-date").focus({ preventScroll: true });
+  }
+
+  if (updateForm && D) {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("plate")) { prefillUpdate(params.get("plate"), params.get("doc")); }
+
+    document.addEventListener("click", function (e) {
+      var link = e.target.closest("[data-prefill-plate]");
+      if (!link) { return; }
+      e.preventDefault();
+      prefillUpdate(link.getAttribute("data-prefill-plate"), link.getAttribute("data-prefill-doc"));
+    });
+  }
+
   if (updateForm && D) {
     updateForm.addEventListener("relay:valid", function (e) {
       var v = findVehicle($("#upd-vehicle").value);
