@@ -1,5 +1,5 @@
 /* =========================================================
-   Relay — page interactions (prototype, no backend)
+   Relay - page interactions (no backend)
    ---------------------------------------------------------
    1. File upload boxes show the chosen file name
    2. e-POD digital signature drawn on a <canvas>
@@ -44,9 +44,9 @@
     return String(parseFloat(Number(n).toFixed(decimals)));
   }
 
-  /* =======================================================
+  /* 
      1. File upload boxes
-     ======================================================= */
+      */
   $all(".dropzone input[type=file]").forEach(function (input) {
     var zone = input.closest(".dropzone");
     var text = $(".dz-text", zone);
@@ -80,9 +80,9 @@
     });
   });
 
-  /* =======================================================
+  /* 
      2. e-POD signature canvas
-     ======================================================= */
+      */
   var signature = (function () {
     var canvas = $("#signature");
     if (!canvas) { return null; }
@@ -157,9 +157,9 @@
     return { isSigned: function () { return signed; }, clear: clear };
   })();
 
-  /* =======================================================
+  /* 
      3. Vehicles: documents, alerts and capacity
-     -------------------------------------------------------
+     
      Uses the sample data in data.js (RelayData).
      Rules (statement + project forum):
        - a vehicle is used only after Staff approves it;
@@ -170,7 +170,7 @@
          "disapprove" it if the courier doesn't update it in time;
        - the load of an order must fit the vehicle (max weight
          and max volume) — "physical load constraints".
-     ======================================================= */
+      */
   var D = window.RelayData;
   var DOCS = ["insurance", "inspection"];
   var DOC_NAME = { insurance: "Insurance", inspection: "Inspection" };
@@ -387,10 +387,10 @@
     if (vehicleSelect) { vehicleSelect.addEventListener("change", showCapacity); }
   }
 
-  /* =======================================================
+  /* 
      4. Courier order status (sequential)
      Initiated → In Progress → Completed (with e-POD) / Cancelled
-     ======================================================= */
+      */
   var courier = (function () {
     var flow = $("[data-status-flow]");
     if (!flow) { return null; }
@@ -626,10 +626,10 @@
     });
   }
 
-  /* =======================================================
+  /* 
      5. Available orders (courier)
      single active task, consolidation, vehicle capacity
-     ======================================================= */
+      */
   var availableForm = $("#available");
   if (availableForm) {
     function checkedRows() {
@@ -669,9 +669,9 @@
     });
   }
 
-  /* =======================================================
+  /* 
      6. Client: products in an order
-     ======================================================= */
+      */
   var orderForm = $("#order-form");
   if (orderForm) {
     var lines = $("[data-product-lines]", orderForm);
@@ -784,9 +784,10 @@
     if (btn) { btn.closest("tr").remove(); }
   });
 
-  /* =======================================================
-     7. Edit profile: changing the password is optional
-     ======================================================= */
+  /* 
+     7. Edit profile: changing the password 
+    revuew this
+      */
   var profileForm = $("#profile-form");
   if (profileForm && $("#pw-new")) {
     V.addRule(profileForm, function () {
@@ -803,11 +804,11 @@
     });
   }
 
-  /* =======================================================
+  /* 
      8. Courier vehicle forms
      - register a new vehicle (goes to Staff as "pending")
      - update a certificate (Staff is alerted to review it)
-     ======================================================= */
+      */
   var vehicleForm = $("#vehicle-form");
   if (vehicleForm && D) {
     // capacity can't exceed the Vehicle_Type limits (Bike, Moto, Van, Truck)
@@ -891,11 +892,11 @@
     });
   }
 
-  /* =======================================================
+  /* 
      9. Client: view the proof of delivery (e-POD)
      Forum (Proof of delivery, 30/09): the POD isn't checked;
      the client sees the POD of each order in the order history.
-     ======================================================= */
+      */
   var epodDialog = $("#epod-viewer");
   if (epodDialog) {
     document.addEventListener("click", function (e) {
@@ -915,10 +916,10 @@
     });
   }
 
-  /* =======================================================
+  /* 
      10. Charts and bars sized from data (Admin dashboard, Home)
      element.style.height / width — "CSS e DOM" in the JS/DOM lesson
-     ======================================================= */
+      */
   function drawBars(box, series) {
     var max = Math.max.apply(null, series.values);
     box.innerHTML = series.values.map(function (value, i) {
@@ -958,10 +959,10 @@
   // any bar with data-pct gets its width from the value
   $all("[data-pct]").forEach(function (el) { el.style.width = el.getAttribute("data-pct") + "%"; });
 
-  /* =======================================================
+  /* 
      11. Live counters (KPI cards and the alerts pill)
      <p data-count="css selector"> shows how many elements match
-     ======================================================= */
+      */
   function updateCounters() {
     $all("[data-count]").forEach(function (el) {
       var n = document.querySelectorAll(el.getAttribute("data-count")).length;
@@ -978,11 +979,11 @@
     }
   }
 
-  /* =======================================================
+  /* 
      12. Staff / Admin decisions
      validate / approve / reject couriers, staff and vehicles;
      disapprove a vehicle whose documents expired
-     ======================================================= */
+      */
   document.addEventListener("click", function (e) {
     var btn = e.target.closest("[data-decision]");
     if (btn) {
@@ -1026,12 +1027,12 @@
     }
   });
 
-  /* =======================================================
+  /* 
      13. Register: what happens to each type of account
-     Client → active right away (goes to login)
-     Courier → pending until Staff validates it
-     Staff → pending until an Admin validates it (forum, 13/10)
-     ======================================================= */
+     Client - active right away (goes to login)
+     Courier - pending until Staff validates it
+     Staff- pending until an Admin validates it (forum, 13/10)
+      */
   var registerForm = $("#register-form");
   if (registerForm) {
     registerForm.addEventListener("relay:valid", function (e) {

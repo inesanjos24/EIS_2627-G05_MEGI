@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Courier area: account status and personal information.">
+  <meta name="author" content="Group 05-Enterprise Information Systems 2026/2027, FEUP">
+  <title>My profile - Relay</title>
+  <link rel="icon" href="data:,">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!--Sidebar-->
+    <aside class="sidebar">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+        <span class="logo-text">Re<span>lay</span></span>
+      </a>
+      <nav class="side-nav">
+        <a href="courier-active-order.html#available">Available orders</a>
+        <a href="courier-active-order.html">Active order</a>
+        <a href="courier-active-order.html#completed">Completed orders</a>
+        <a href="courier-vehicles.html">My vehicles</a>
+        <a href="courier-profile.html" class="active">Profile</a>
+      </nav>
+      <a href="login.html" class="logout">← Log out</a>
+    </aside>
+
+    <div class="main">
+      <!-- Top bar -->
+      <header class="topbar">
+        <h1>My profile</h1>
+        <div class="user-box">
+          <span class="alerts-pill" data-alerts-for="João Silva">alerts</span>
+          <span class="avatar"></span>
+          <span class="who"><strong>João Silva</strong><small>Courier</small></span>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- Document alerts also appear here, so the courier sees them on every page -->
+        <div class="page-alerts" data-render="courier-alerts" data-courier="João Silva" aria-live="polite"></div>
+
+        <!-- Profile header -->
+        <section class="card profile-head">
+          <span class="avatar lg"></span>
+          <div>
+            <h2>João Silva <span class="badge badge-blue">Courier</span></h2>
+            <p>@joao.silva &nbsp;•&nbsp; Member since 12/09/2026</p>
+          </div>
+          <div class="actions">
+            <label class="btn btn-outline">Change photo <input type="file" accept="image/*" hidden></label>
+          </div>
+        </section>
+
+        <!-- Account -->
+        <section class="grid-3">
+          <article class="card kpi">
+            <small>Account status</small>
+            <p class="mt-6"><span class="badge badge-green">✓ Validated by Staff</span></p>
+          </article>
+          <article class="card kpi">
+            <small>Registered vehicles</small>
+            <p class="value">3</p>
+          </article>
+          <article class="card kpi">
+            <small>Completed deliveries</small>
+            <p class="value">128</p>
+          </article>
+        </section>
+
+        <!-- Edit personal information -->
+        <form id="profile-form" action="courier-profile.html" method="post" class="flush content" data-success="Profile updated." data-keep-values>
+          <section class="card">
+            <h2 class="card-title">Personal information</h2>
+            <div class="form-grid">
+              <div class="field">
+                <label for="name">Full name *</label>
+                <input class="input" id="name" name="name" value="João Silva" required>
+              </div>
+              <div class="field">
+                <label for="username">Username *</label>
+                <input class="input" id="username" name="username" value="joao.silva" required>
+              </div>
+              <div class="field">
+                <label for="email">Email *</label>
+                <input class="input" type="email" id="email" name="email" value="joao.silva@email.pt" required>
+              </div>
+              <div class="field">
+                <label for="phone">Phone *</label>
+                <input class="input" type="tel" id="phone" name="phone" data-phone value="+351 912 345 678" required>
+              </div>
+              <div class="field">
+                <label for="nif">NIF *</label>
+                <input class="input" type="text" id="nif" name="nif" value="245 678 901" data-digits="9" required>
+              </div>
+              <div class="field">
+                <label for="role">Role</label>
+                <div class="input-wrap">
+                  <input class="input" id="role" value="Courier" readonly>
+                  <span class="suffix">Read-only</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Changing the password -->
+          <section class="card">
+            <h2 class="card-title">Change password</h2>
+            <div class="form-grid cols-3">
+              <div class="field">
+                <label for="pw-current">Current password</label>
+                <input class="input" type="password" id="pw-current" name="current_password" autocomplete="current-password">
+              </div>
+              <div class="field">
+                <label for="pw-new">New password</label>
+                <input class="input" type="password" id="pw-new" name="new_password" minlength="8" autocomplete="new-password">
+              </div>
+              <div class="field">
+                <label for="pw-confirm">Confirm new password</label>
+                <input class="input" type="password" id="pw-confirm" name="confirm_password" data-match="pw-new" autocomplete="new-password">
+              </div>
+            </div>
+            <p class="text-sm mt-12 text-muted">Minimum 8 characters, with at least one number. Leave blank to keep the current password.</p>
+          </section>
+
+          <div class="m-0 form-actions">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+            <a href="courier-active-order.html" class="btn btn-ghost">Cancel</a>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
