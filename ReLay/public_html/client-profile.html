@@ -99,6 +99,18 @@
       </main>
     </div>
   </div>
+    
+  <dialog class="modal" id="order-details" aria-labelledby="details-title">
+    <div class="modal-head">
+      <span class="modal-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+      <div>
+        <h2 id="details-title">Order details</h2>
+        <p data-details-sub></p>
+      </div>
+      <button type="button" class="modal-close" data-close aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" data-details-body></div>
+  </dialog>
 
   <script src="js/data.js"></script>
   <script src="js/validation.js"></script>

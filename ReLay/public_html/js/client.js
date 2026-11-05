@@ -179,6 +179,80 @@
       renderHistory();
     });
   });
+  
+    function openDialog(dialog) {
+    if (dialog.showModal) { dialog.showModal(); } else { dialog.setAttribute("open", ""); }
+  }
+  function closeDialog(dialog) {
+    if (dialog.close) { dialog.close(); } else { dialog.removeAttribute("open"); }
+  }
+  $all("dialog.modal").forEach(function (dialog) {
+    $all("[data-close]", dialog).forEach(function (btn) {
+      btn.addEventListener("click", function () { closeDialog(dialog); });
+    });
+    // click on the dark background closes it too
+    dialog.addEventListener("click", function (e) { if (e.target === dialog) { closeDialog(dialog); } });
+  });
+
+  var SIGNATURE_SVG = '<svg viewBox="0 0 200 80" aria-hidden="true"><path d="M10 55c15-30 25-35 30-20s-5 25 5 15 20-40 30-25-10 30 5 20 15-25 25-15 5 15 15 8 20-15 30-10 20 5 35-5" fill="none" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/></svg>';
+
+  var detailsDialog = $("#order-details");
+  if (detailsDialog) {
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-details]");
+      if (!btn) { return; }
+      var o = findOrder(btn.getAttribute("data-details"));
+      if (!o) { return; }
+      var t = totals(o);
+      var cancelled = o.status === "cancelled";
+
+      $("[data-details-sub]", detailsDialog).textContent = cancelled
+        ? "Products, route and reason for a cancelled order."
+        : "Products, route and proof of delivery of a completed order.";
+
+      var items = o.items.map(function (it) {
+        var p = product(it.ref);
+        return '<li><span class="qty">' + it.qty + '×</span><span class="what"><strong>' + esc(p.description) +
+          "</strong><small>" + esc(p.category) + " · " + p.ref + '</small></span><span class="meta">' +
+          kg(it.qty * p.weight_kg) + " · " + m3(it.qty * p.volume_m3) + "</span></li>";
+      }).join("");
+
+      var ending = cancelled
+        ? "<h4>Cancellation</h4><div class=\"cancel-box\"><strong>Delivery attempts limit reached (" + o.attempts.length + " of 2)</strong>" +
+          o.attempts.map(function (a, i) { return "<p>Attempt " + (i + 1) + " · " + esc(a) + "</p>"; }).join("") +
+          "<p>No proof of delivery — the order was not delivered.</p></div>"
+        : "<h4>Proof of delivery (e-POD)</h4><div class=\"epod-box\"><div class=\"epod-thumb\">" +
+          (o.epod === "photo" ? "Photo" : SIGNATURE_SVG) + "</div><div><strong>" +
+          (o.epod === "photo" ? "Delivery photo" : "Digital signature") + "</strong><small>Submitted " + esc(o.closed_at) +
+          " by " + esc(o.courier) + '</small><button type="button" class="btn-link text-13" data-expand>View full size</button></div></div>';
+
+      $("[data-details-body]", detailsDialog).innerHTML =
+        '<div class="oc-head"><h3>Order #' + o.id + "</h3>" + (cancelled
+          ? '<span class="badge badge-red">✕ Cancelled</span>'
+          : '<span class="badge badge-green">✓ Completed</span>') + "</div>" +
+        steps(o) +
+        '<dl class="detail-grid">' +
+          detail("Origin", esc(o.origin.name) + " · " + esc(coords(o.origin))) +
+          detail("Destination", esc(o.dest.name) + " · " + esc(coords(o.dest))) +
+          detail("Courier", esc(o.courier || "—")) +
+          detail("Vehicle", esc(o.vehicle || "—")) +
+          detail("Ordered on", esc(o.created_at)) +
+          detail("Delivered on", esc(o.closed_at)) +
+        "</dl>" +
+        "<div><h4>Products in this order</h4><ul class=\"item-list\">" + items +
+        '<li class="total"><span>Total</span><span>' + totalsText(t) + "</span></li></ul></div>" +
+        "<div>" + ending + "</div>";
+
+      openDialog(detailsDialog);
+    });
+
+    detailsDialog.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-expand]");
+      if (!btn) { return; }
+      var box = btn.closest(".epod-box");
+      btn.textContent = box.classList.toggle("expanded") ? "Show smaller" : "View full size";
+    });
+  }
 
   renderActive();
   renderHistory();
