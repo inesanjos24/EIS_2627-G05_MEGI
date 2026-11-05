@@ -163,7 +163,7 @@
 
   function renderHistory() {
     $all('[data-render="client-history"]').forEach(function (tbody) {
-      var past = D.clientOrders;
+      var past = D.clientOrders.filter(function (o) { return !isActive(o); });
       var limit = Number(tbody.getAttribute("data-limit")) || past.length;
       var showAll = tbody.hasAttribute("data-show-all");
       tbody.innerHTML = (showAll ? past : past.slice(0, limit)).map(historyRow).join("");
