@@ -188,6 +188,8 @@
 
   window.RelayData = {
     ALERT_WINDOW_DAYS: ALERT_WINDOW_DAYS,
+    clientProducts: clientProducts,
+    clientOrders: clientOrders,
     vehicleTypes: vehicleTypes,
     vehicles: vehicles,
     deliveries: deliveries,
