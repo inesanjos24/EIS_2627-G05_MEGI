@@ -253,6 +253,126 @@
       btn.textContent = box.classList.toggle("expanded") ? "Show smaller" : "View full size";
     });
   }
+  
+  var trackDialog = $("#track-order");
+  var trackMap = null;
+  var trackLayers = null;
+  var trackedOrder = null;
+  var replyTimer = null;
+
+  var VAN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg>';
+
+  function drawTrackMap(o) {
+    var box = $(".track-map", trackDialog);
+    if (!window.L) {
+      box.classList.add("map-offline");
+      box.textContent = "The map could not be loaded.";
+      return;
+    }
+    if (!trackMap) {
+      var asFile = window.location.protocol === "file:";
+      trackMap = L.map(box, { scrollWheelZoom: false, zoomSnap: 0.25 });
+      L.tileLayer(asFile
+        ? "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+        : "https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: asFile ? 'Tiles &copy; <a href="https://www.esri.com">Esri</a>'
+                            : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(trackMap);
+      trackLayers = L.layerGroup().addTo(trackMap);
+    }
+    trackLayers.clearLayers();
+    var origin = [o.origin.lat, o.origin.lng];
+    var dest = [o.dest.lat, o.dest.lng];
+    var here = [o.lastLocation.lat, o.lastLocation.lng];
+
+    L.polyline([origin, here], { color: "#2563eb", weight: 4 }).addTo(trackLayers);
+    L.polyline([here, dest], { color: "#2563eb", weight: 4, opacity: 0.7, dashArray: "2 8" }).addTo(trackLayers);
+
+    function dot(point, color, label) {
+      L.circleMarker(point, { radius: 7, color: "#fff", weight: 3, fillColor: color, fillOpacity: 1 })
+        .bindTooltip(label, { permanent: true, direction: "top", offset: [0, -8], className: "route-label" })
+        .addTo(trackLayers);
+    }
+    dot(origin, "#ff6b00", "Origin · " + o.origin.name);
+    dot(dest, "#2563eb", "Destination");
+
+    L.marker(here, {
+      icon: L.divIcon({ className: "", html: '<span class="courier-pin">' + VAN_SVG + "</span>", iconSize: [30, 30], iconAnchor: [15, 15] }),
+      title: "Courier"
+    }).bindTooltip(esc(o.courier) + " · " + esc(o.vehicle.replace(" · ", " ")) + "<br>" + esc(o.lastLocation.place) +
+      "<br><small>Shared by the courier at " + o.lastLocation.at + "</small>",
+      { permanent: true, direction: "top", offset: [0, -16], className: "route-label" }).addTo(trackLayers);
+
+    setTimeout(function () {
+      trackMap.invalidateSize();
+      trackMap.fitBounds(L.latLngBounds([origin, dest, here]), { padding: [36, 36] });
+    }, 50);
+  }
+
+  function setRequestBox(state, o) {
+    var box = $("[data-request]", trackDialog);
+    var btn = $("[data-request-btn]", trackDialog);
+    box.classList.toggle("pending", state === "pending");
+    if (state === "pending") {
+      $("strong", box).textContent = "Request sent at " + o.requestedAt + " — waiting for " + o.courier;
+      $("small", box).textContent = "The map updates when the courier replies.";
+      btn.textContent = "Request pending…";
+      btn.disabled = true;
+    } else {
+      $("strong", box).textContent = "Courier location shared at " + o.lastLocation.at;
+      $("small", box).textContent = "The courier sends his latest position when you request it.";
+      btn.textContent = "⌖ Request location";
+      btn.disabled = false;
+    }
+  }
+
+  if (trackDialog) {
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-track]");
+      if (!btn) { return; }
+      var o = findOrder(btn.getAttribute("data-track"));
+      if (!o || !o.lastLocation) { return; }
+      trackedOrder = o;
+      var t = totals(o);
+      $("[data-track-title]", trackDialog).textContent = "Order #" + o.id;
+      $("[data-track-steps]", trackDialog).innerHTML = steps(o);
+      $("[data-track-details]", trackDialog).innerHTML =
+        detail("Origin", esc(o.origin.name) + " · " + esc(coords(o.origin))) +
+        detail("Destination", esc(o.dest.name) + " · " + esc(coords(o.dest))) +
+        detail("Courier", esc(o.courier)) +
+        detail("Vehicle", esc(o.vehicle)) +
+        detail("Products", t.items + (t.items === 1 ? " item" : " items") + " · " + kg(t.kg)) +
+        detail("Estimated arrival", esc(o.eta || "—"));
+      setRequestBox(o.requestedAt ? "pending" : "shared", o);
+      openDialog(trackDialog);
+      drawTrackMap(o);
+    });
+
+    $("[data-request-btn]", trackDialog).addEventListener("click", function () {
+      var o = trackedOrder;
+      if (!o) { return; }
+      o.requestedAt = nowTime();
+      setRequestBox("pending", o);
+
+      clearTimeout(replyTimer);
+      replyTimer = setTimeout(function () {
+        o.lastLocation = {
+          lat: o.lastLocation.lat + (o.dest.lat - o.lastLocation.lat) * 0.4,
+          lng: o.lastLocation.lng + (o.dest.lng - o.lastLocation.lng) * 0.4,
+          place: "Rua de Gonçalo Cristóvão, Porto",
+          at: nowTime()
+        };
+        o.updated = "Today, " + o.lastLocation.at;
+        delete o.requestedAt;
+        renderActive();
+        if (trackedOrder === o && trackDialog.open) {
+          setRequestBox("shared", o);
+          drawTrackMap(o);
+        }
+      }, 6000);
+    });
+  }  
 
   renderActive();
   renderHistory();
