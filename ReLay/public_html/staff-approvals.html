@@ -1,15 +1,120 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Staff back office: courier validation, vehicle approval and document alerts.">
+  <meta name="author" content="Group 05 — Enterprise Information Systems 2026/2027, FEUP">
+  <title>Approvals &amp; alerts — Relay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ===== Sidebar ===== -->
+    <aside class="sidebar">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+        <span class="logo-text">Re<span>lay</span></span>
+      </a>
+      <nav class="side-nav">
+        <a href="staff-approvals.html#couriers" class="active">Pending couriers</a>
+        <a href="staff-approvals.html#vehicles">Pending vehicles</a>
+        <a href="staff-approvals.html#fleet">Fleet documents</a>
+        <a href="staff-approvals.html#alerts">Document alerts</a>
+        <a href="staff-profile.html">Profile</a>
+      </nav>
+      <a href="login.html" class="logout">← Log out</a>
+    </aside>
+
+    <div class="main">
+      <!-- ===== Top bar ===== -->
+      <header class="topbar">
+        <h1>Approvals &amp; alerts</h1>
+        <div class="user-box">
+          <span class="alerts-pill" data-alerts-for="staff">alerts</span>
+          <span class="avatar"></span>
+          <span class="who"><strong>Marta Costa</strong><small>Staff</small></span>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="grid-3">
+          <article class="card kpi"><small>Pending couriers</small><p class="value blue" data-count="#couriers tr[data-pending]">3</p></article>
+          <article class="card kpi"><small>Pending vehicles</small><p class="value blue" data-count='[data-render="pending-vehicles"] tr[data-pending]'>2</p></article>
+          <article class="card kpi"><small>Document alerts</small><p class="value red" data-count='[data-render="staff-alerts"] .alert-row'>5</p></article>
+        </section>
+
+        <!-- Document alerts -->
+        <section class="card" id="alerts">
+          <h2 class="card-title">Document alerts</h2>
+          <p class="card-sub">Alert window: documents expired or expiring in the next 3 days, and newly uploaded certificates.</p>
+          <div class="page-alerts" data-render="staff-alerts" aria-live="polite">
+            <noscript>Turn on JavaScript to see the document alerts.</noscript>
+          </div>
+        </section>
+
+        <!-- Couriers pending validation -->
+        <section class="card" id="couriers">
+          <h2 class="card-title">Couriers pending validation</h2>
+          <p class="card-sub">New courier accounts stay "Pending" until a Staff member validates them.</p>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Name</th><th>NIF</th><th>Email</th><th>Phone</th><th>Registration date</th><th>Actions</th></tr></thead>
+              <tbody>
+                <tr data-pending data-name="Pedro Lima"><td>Pedro Lima</td><td>231 456 789</td><td>pedro.lima@email.pt</td><td>+351 914 111 222</td><td>21/10/2026</td>
+                  <td><div class="actions"><button type="button" class="btn btn-sm btn-primary" data-decision="Approved">✓ Approve</button><button type="button" class="btn btn-sm btn-danger" data-decision="Rejected">✕ Reject</button></div></td></tr>
+                <tr data-pending data-name="Sara Matos"><td>Sara Matos</td><td>209 876 543</td><td>sara.matos@email.pt</td><td>+351 936 222 333</td><td>23/10/2026</td>
+                  <td><div class="actions"><button type="button" class="btn btn-sm btn-primary" data-decision="Approved">✓ Approve</button><button type="button" class="btn btn-sm btn-danger" data-decision="Rejected">✕ Reject</button></div></td></tr>
+                <tr data-pending data-name="Tiago Rocha"><td>Tiago Rocha</td><td>256 111 222</td><td>tiago.rocha@email.pt</td><td>+351 917 444 555</td><td>26/10/2026</td>
+                  <td><div class="actions"><button type="button" class="btn btn-sm btn-primary" data-decision="Approved">✓ Approve</button><button type="button" class="btn btn-sm btn-danger" data-decision="Rejected">✕ Reject</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Vehicles pending approval -->
+        <section class="card" id="vehicles">
+          <h2 class="card-title">Vehicles pending approval</h2>
+          <p class="card-sub">Check the insurance and inspection certificates before approving. A vehicle with an expired document cannot be approved.</p>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Licence plate</th><th>Type</th><th>Courier</th><th>Capacity</th><th>Insurance</th><th>Inspection</th><th>Documents</th><th>Actions</th></tr></thead>
+              <tbody data-render="pending-vehicles">
+                <tr><td colspan="8">Turn on JavaScript to see the vehicles.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Approved fleet with document problems: "disapprove" (forum, 07/10) -->
+        <section class="card" id="fleet">
+          <h2 class="card-title">Approved vehicles — document monitoring</h2>
+          <p class="card-sub">If the courier doesn't upload updated documents by the deadline, Staff can disapprove the vehicle.</p>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Licence plate</th><th>Type</th><th>Courier</th><th>Insurance</th><th>Inspection</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody data-render="fleet-monitor">
+                <tr><td colspan="7">Turn on JavaScript to see the vehicles.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="legend">
+            Legend:
+            <span class="badge badge-red">Expired</span>
+            <span class="badge badge-amber">Expiring (≤ 3 days)</span>
+            <span class="badge badge-green">Valid</span>
+            <span class="badge badge-blue">New document</span>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+</body>
 </html>
