@@ -156,6 +156,20 @@
         .catch(function () { /* offline: keep the straight line */ });
     }
 
+    // Courier's shared location (Location requests card): one dark marker that moves
+    var courierMarker = null;
+    el.relaySetCourier = function (lat, lng, label) {
+      var p = L.latLng(lat, lng);
+      if (!courierMarker) {
+        courierMarker = L.circleMarker(p, { radius: 9, color: "#ffffff", weight: 3, fillColor: "#111827", fillOpacity: 1 })
+          .bindTooltip(label || "You are here", { permanent: true, direction: "top", offset: [0, -10], className: "route-label" })
+          .addTo(map);
+      } else {
+        courierMarker.setLatLng(p).setTooltipContent(label || "You are here");
+      }
+      map.fitBounds(L.latLngBounds(routePoints().concat([p])), { padding: [50, 50], maxZoom: 15 });
+    };
+
     // New route from another script: [[lat,lng], ...] going through every point
     el.relaySetRoute = function (list, fromName, toName) {
       var points = list.map(function (p) { return L.latLng(p[0], p[1]); });
