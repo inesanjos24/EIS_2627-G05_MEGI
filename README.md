@@ -23,7 +23,7 @@ The maps and fonts need internet.
 | Client | client-profile, client-orders, client-order-created, client-order-history, client-products, client-edit-profile | Bea |
 | Courier | courier-active-order, courier-vehicles, courier-profile | Inês |
 | Staff | staff-approvals, staff-profile | Raul |
-| Admin | admin-panel, admin-dashboard, admin-profile | TBD |
+| Admin | admin-panel, admin-dashboard, admin-profile | Adriany |
 
 ## Main features
 
