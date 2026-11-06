@@ -237,7 +237,7 @@
           detail("Courier", esc(o.courier || "—")) +
           detail("Vehicle", esc(o.vehicle || "—")) +
           detail("Ordered on", esc(o.created_at)) +
-          detail("Delivered on", esc(o.closed_at)) +
+          detail(cancelled ? "Cancelled on" : "Delivered on", esc(o.closed_at)) +
         "</dl>" +
         "<div><h4>Products in this order</h4><ul class=\"item-list\">" + items +
         '<li class="total"><span>Total</span><span>' + totalsText(t) + "</span></li></ul></div>" +
@@ -294,7 +294,7 @@
         .bindTooltip(label, { permanent: true, direction: "top", offset: [0, -8], className: "route-label" })
         .addTo(trackLayers);
     }
-    dot(origin, "#ff6b00", "Origin · " + o.origin.name);
+    dot(origin, "#2563eb", "Origin · " + o.origin.name);
     dot(dest, "#2563eb", "Destination");
 
     L.marker(here, {
