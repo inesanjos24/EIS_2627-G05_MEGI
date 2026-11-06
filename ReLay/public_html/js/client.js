@@ -372,7 +372,19 @@
         }
       }, 6000);
     });
-  }  
+  } 
+  
+  var profileForm = $("#profile-form");
+  if (profileForm) {
+    profileForm.addEventListener("relay:valid", function () {
+      var name = $("#name").value.trim();
+      var user = $("#username").value.trim();
+      $all("[data-client-name]").forEach(function (el) { el.textContent = name; });
+      $all("[data-client-user]").forEach(function (el) { el.textContent = "@" + user; });
+      // clear the password fields after a successful save
+      ["#pw-current", "#pw-new", "#pw-confirm"].forEach(function (id) { $(id).value = ""; });
+    });
+  }
 
   renderActive();
   renderHistory();
