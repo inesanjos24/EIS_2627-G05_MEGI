@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Create a Relay account as a client, courier or staff member.">
+  <meta name="author" content="Group 05 — Enterprise Information Systems 2026/2027, FEUP">
+  <title>Create your account — Relay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="register-page">
+
+  <header class="auth-header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg>
+        </span>
+        <span class="logo-text">Re<span>lay</span></span>
+      </a>
+      <a href="index.html" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <main class="register-main">
+    <h1>Create your account</h1>
+    <p>All fields marked * are required.</p>
+
+    <form id="register-form" action="login.html" method="post" class="flush content">
+
+      <!-- 1. Account type -->
+      <section class="card">
+        <h2 class="step-title"><b>1</b> • Account type *</h2>
+        <div class="choice-grid">
+          <label class="choice">
+            <input type="radio" name="role" value="client" required data-error="Choose the type of account">
+            <span class="box">
+              <span class="radio"></span>
+              <strong>Client</strong>
+              <small>Send parcels, register products and follow your orders.</small>
+              <em class="text-green">Active right away</em>
+            </span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="role" value="courier" checked>
+            <span class="box">
+              <span class="radio"></span>
+              <strong>Courier</strong>
+              <small>Deliver orders with your own vehicles and submit e-POD.</small>
+              <em class="text-red">Needs Staff validation</em>
+            </span>
+          </label>
+          <label class="choice">
+            <input type="radio" name="role" value="staff">
+            <span class="box">
+              <span class="radio"></span>
+              <strong>Staff</strong>
+              <small>Validate couriers and approve vehicles in the back office.</small>
+              <em class="text-red">Needs Admin validation</em>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 2. Personal details -->
+      <section class="card">
+        <h2 class="step-title"><b>2</b> • Personal details</h2>
+        <div class="form-grid">
+          <div class="field">
+            <label for="name">Full name *</label>
+            <input class="input white" id="name" name="name" placeholder="João Silva" required>
+          </div>
+          <div class="field">
+            <label for="nif">NIF *</label>
+            <input class="input white" id="nif" name="nif" placeholder="123 456 789" data-digits="9" required>
+          </div>
+          <div class="field">
+            <label for="email">Email *</label>
+            <input class="input white" type="email" id="email" name="email" placeholder="joao.silva@email.pt" required>
+          </div>
+          <div class="field">
+            <label for="phone">Phone *</label>
+            <input class="input white" type="tel" id="phone" name="phone" placeholder="+351 912 345 678" data-phone required>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Login details -->
+      <section class="card">
+        <h2 class="step-title"><b>3</b> • Login details</h2>
+        <div class="form-grid">
+          <div class="field span-all">
+            <label for="username">Username *</label>
+            <input class="input white" id="username" name="username" placeholder="joao.silva" pattern="[A-Za-z0-9._]{3,20}" data-error="Use 3–20 characters: letters, numbers, dots or underscores" required>
+            <span class="hint">3–20 characters: letters, numbers, dots and underscores.</span>
+          </div>
+          <div class="field">
+            <label for="password">Password *</label>
+            <input class="input white" type="password" id="password" name="password" minlength="8" required>
+            <span class="hint">Min. 8 characters.</span>
+          </div>
+          <div class="field">
+            <label for="password2">Confirm password *</label>
+            <input class="input white" type="password" id="password2" name="password2" data-match="password" required>
+          </div>
+        </div>
+      </section>
+
+      <!-- Terms + submit -->
+      <section class="card">
+        <label class="checkbox">
+          <input type="checkbox" name="terms" required data-error="Accept the terms to create your account">
+          I agree to the terms of service and Relay storing my data to manage deliveries.
+        </label>
+        <p class="text-13 mt-12 text-muted status-note">Client accounts are active right away. Courier accounts stay pending until a Staff member validates them; Staff accounts stay on hold until an Administrator validates them.</p>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-orange">Create account</button>
+          <a href="index.html" class="btn btn-ghost">Cancel</a>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
