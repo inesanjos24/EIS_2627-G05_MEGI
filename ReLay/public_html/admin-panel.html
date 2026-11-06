@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin area: staff accounts waiting for validation and recent activity.">
+  <meta name="author" content="Group 05-Enterprise Information Systems 2026/2027, FEUP">
+  <title>Admin panel - Relay</title>
+  <link rel="icon" href="data:,">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!--Sidebar-->
+    <aside class="sidebar">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+        <span class="logo-text">Re<span>lay</span></span>
+      </a>
+      <nav class="side-nav">
+        <a href="admin-panel.html" class="active">Pending staff</a>
+        <a href="admin-dashboard.html">Operational dashboard</a>
+        <a href="admin-profile.html">Profile</a>
+      </nav>
+      <a href="login.html" class="logout">← Log out</a>
+    </aside>
+
+    <div class="main">
+      <!-- Top bar -->
+      <header class="topbar">
+        <h1>Admin panel</h1>
+        <div class="user-box">
+          <!-- admin.js keeps this number in step with the table below -->
+          <span class="alerts-pill" data-pending-pill="#pending-staff tr[data-pending]">3 pending staff</span>
+          <span class="avatar"></span>
+          <span class="who"><strong>Rui Almeida</strong><small>Admin</small></span>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="grid-4">
+          <article class="card kpi"><small>Pending staff</small><p class="value" data-count="#pending-staff tr[data-pending]">3</p></article>
+          <article class="card kpi"><small>Active staff</small><p class="value">8</p></article>
+          <article class="card kpi"><small>Active couriers</small><p class="value">45</p></article>
+          <article class="card kpi"><small>Clients</small><p class="value">320</p></article>
+        </section>
+
+        <!-- Forum (Staff account, 13/10): staff create their own account;
+             it stays on hold until the administrator validates it. -->
+        <section class="card">
+          <h2 class="card-title">Staff pending validation</h2>
+          <p class="card-sub">Staff members created these accounts themselves. They stay on hold until you validate them.</p>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Name</th><th>Work email</th><th>Phone</th><th>NIF</th><th>Request date</th><th>Actions</th></tr></thead>
+              <tbody id="pending-staff">
+                <tr data-pending data-name="Ricardo Pinto"><td>Ricardo Pinto</td><td>ricardo.pinto@relay.pt</td><td>+351 913 222 111</td><td>245 111 908</td><td>22/10/2026</td>
+                  <td><div class="actions"><button type="button" class="btn btn-sm btn-primary" data-decision="Validated">✓ Validate</button><button type="button" class="btn btn-sm btn-danger" data-decision="Rejected">✕ Reject</button></div></td></tr>
+                <tr data-pending data-name="Bruno Dias"><td>Bruno Dias</td><td>bruno.dias@relay.pt</td><td>+351 926 444 555</td><td>236 777 120</td><td>24/10/2026</td>
+                  <td><div class="actions"><button type="button" class="btn btn-sm btn-primary" data-decision="Validated">✓ Validate</button><button type="button" class="btn btn-sm btn-danger" data-decision="Rejected">✕ Reject</button></div></td></tr>
+                <tr data-pending data-name="Sofia Mendes"><td>Sofia Mendes</td><td>sofia.mendes@relay.pt</td><td>+351 917 888 999</td><td>212 340 556</td><td>26/10/2026</td>
+                  <td><div class="actions"><button type="button" class="btn btn-sm btn-primary" data-decision="Validated">✓ Validate</button><button type="button" class="btn btn-sm btn-danger" data-decision="Rejected">✕ Reject</button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="empty-note mt-12" data-pending-empty hidden>No staff accounts waiting for validation.</p>
+        </section>
+
+        <section class="grid-main-side">
+          <section class="card">
+            <h2 class="card-title">Recent activity</h2>
+            <ul class="activity">
+              <li><span class="badge badge-green">Validated</span><div><strong>Validated staff account</strong><small>Hugo Reis</small></div><time>Yesterday, 17:02</time></li>
+              <li><span class="badge badge-red">Rejected</span><div><strong>Rejected staff request</strong><small>Ivo Pires (not a Relay employee)</small></div><time>20/10/2026</time></li>
+              <li><span class="badge badge-blue">Profile</span><div><strong>Updated personal information</strong><small>Rui Almeida</small></div><time>15/10/2026</time></li>
+              <li><span class="badge badge-green">Validated</span><div><strong>Validated staff account</strong><small>Marta Costa</small></div><time>29/09/2026</time></li>
+            </ul>
+          </section>
+
+          <section class="card">
+            <h2 class="card-title">Operational dashboard</h2>
+            <p class="mt-n6 card-sub">View system KPIs: users, orders, routes and vehicles.</p>
+            <a href="admin-dashboard.html" class="btn btn-orange">Open dashboard →</a>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
