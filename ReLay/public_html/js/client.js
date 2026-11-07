@@ -203,7 +203,7 @@
         var p = product(l.ref);
         return '<li class="product-line" data-ref="' + l.ref + '">' +
           '<span class="stepper">' +
-            '<button type="button" class="qty-btn" data-step="-1" aria-label="One less ' + esc(p.description) + '"' + (l.qty <= 1 ? " disabled" : "") + ">−</button>"
+            '<button type="button" class="qty-btn" data-step="-1" aria-label="One less ' + esc(p.description) + '"' + (l.qty <= 1 ? " disabled" : "") + ">−</button>" +
             '<span class="qty">' + l.qty + "</span>" +
             '<button type="button" class="qty-btn" data-step="1" aria-label="One more ' + esc(p.description) + '">+</button>' +
           "</span>" +
