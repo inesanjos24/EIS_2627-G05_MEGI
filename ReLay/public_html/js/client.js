@@ -180,6 +180,32 @@
     });
   });
   
+  var productForm = $("#product-form");
+  var productTable = $('[data-render="client-products"]');
+  var editingRef = null;
+
+  function renderProducts() {
+    if (!productTable) { return; }
+    productTable.innerHTML = D.clientProducts.slice().reverse().map(function (p) {
+      var n = timesUsed(p.ref);
+      var locked = n > 0;
+      var why = locked ? ' disabled title="Used in ' + n + (n === 1 ? " order" : " orders") + ' — it can\'t be changed"' : "";
+      return '<tr' + (locked ? ' class="row-locked"' : "") + ' data-ref="' + p.ref + '"><td>' + p.ref + "</td><td>" + esc(p.description) +
+        "</td><td>" + esc(p.category) + "</td><td>" + kg(p.weight_kg) + "</td><td>" + m3(p.volume_m3) + "</td><td>" +
+        (n ? n + (n === 1 ? " order" : " orders") : "—") + '</td><td><div class="actions">' +
+        '<button type="button" class="btn btn-sm btn-outline" data-edit="' + p.ref + '"' + why + ">Edit</button>" +
+        '<button type="button" class="btn btn-sm btn-danger" data-delete="' + p.ref + '"' + why + ">Delete</button>" +
+        "</div></td></tr>";
+    }).join("") || '<tr><td colspan="7" class="text-muted">No products yet. Register your first product above.</td></tr>';
+  }
+
+  function stopEditing() {
+    editingRef = null;
+    if (!productForm) { return; }
+    $("[data-form-title]").textContent = "Register a product";
+    $("#product-submit").textContent = "+ Add product";
+  }
+  
     function openDialog(dialog) {
     if (dialog.showModal) { dialog.showModal(); } else { dialog.setAttribute("open", ""); }
   }
@@ -389,6 +415,7 @@
   renderActive();
   renderHistory();
   renderKpis();
+  renderProducts();
 })();
 
 

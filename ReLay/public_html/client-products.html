@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Client area: register the products (weight and volume) used in delivery orders.">
+  <meta name="author" content="Group 05-Enterprise Information Systems 2026/2027, FEUP">
+  <title>My products - Relay</title>
+  <link rel="icon" href="data:,">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <aside class="sidebar">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+        <span class="logo-text">Re<span>lay</span></span>
+      </a>
+      <nav class="side-nav">
+        <a href="client-orders.html">Orders</a>
+        <a href="client-products.html" class="active">Products</a>
+        <a href="client-profile.html">Profile</a>
+      </nav>
+      <a href="login.html" class="logout">← Log out</a>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <h1>My products</h1>
+        <div class="user-box">
+          <span class="alerts-pill" title="Order updates today">2 alerts</span>
+          <span class="avatar"></span>
+          <span class="who"><strong>Ana Ferreira</strong><small>Client</small></span>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="grid-4">
+          <article class="card kpi highlight">
+            <small>Registered products</small>
+            <p class="value" data-kpi="products">–</p>
+            <p class="sub" data-kpi="products-sub"></p>
+          </article>
+          <article class="card kpi">
+            <small>Total weight</small>
+            <p class="value" data-kpi="weight">–</p>
+            <p class="sub" data-kpi="weight-sub"></p>
+          </article>
+          <article class="card kpi">
+            <small>Total volume</small>
+            <p class="value" data-kpi="volume">–</p>
+            <p class="sub" data-kpi="volume-sub"></p>
+          </article>
+          <article class="card kpi">
+            <small>Used in orders</small>
+            <p class="value" data-kpi="used">–</p>
+            <p class="sub"><a href="client-orders.html#active" class="link" data-kpi="used-sub">in active orders</a></p>
+          </article>
+        </section>
+
+        <form id="product-form" class="card" action="client-products.html" method="post" data-success="Product registered.">
+          <h2 class="card-title" data-form-title>Register a product</h2>
+          <p class="card-sub">Products you register here can be added to any of your orders. All fields are required.</p>
+          <div class="form-grid cols-4">
+            <div class="field">
+              <label for="p-desc">Description *</label>
+              <input class="input white" id="p-desc" name="description" placeholder="e.g. Shoe box" maxlength="60" required>
+            </div>
+            <div class="field">
+              <label for="p-cat">Category *</label>
+              <select class="select bg-white" id="p-cat" name="category" required>
+                <option value="">Select</option>
+                <option>Documents</option>
+                <option>Electronics</option>
+                <option>Footwear</option>
+                <option>Clothing</option>
+                <option>Home &amp; decor</option>
+                <option>Food (non-perishable)</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="p-weight">Weight (kg) *</label>
+              <div class="input-wrap">
+                <input class="input white" id="p-weight" name="weight_kg" placeholder="0.0" inputmode="decimal"
+                       data-number min="0" max="3500" required>
+                <span class="suffix">kg</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="p-vol">Volume (m³) *</label>
+              <div class="input-wrap">
+                <input class="input white" id="p-vol" name="volume_m3" placeholder="0.00" inputmode="decimal"
+                       data-number min="0" max="20" required>
+                <span class="suffix">m³</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="product-submit">+ Add product</button>
+            <button type="reset" class="btn btn-danger">Cancel</button>
+          </div>
+        </form>
+
+        <section class="card">
+          <div class="card-head">
+            <h2 class="card-title">My products</h2>
+            <span class="text-blue text-14 fw-500" data-kpi="count-products"></span>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>Ref.</th><th>Description</th><th>Category</th><th>Weight</th><th>Volume</th><th>Used in</th><th>Actions</th></tr>
+              </thead>
+              <tbody data-render="client-products" aria-live="polite"></tbody>
+            </table>
+          </div>
+          <p class="text-sm mt-12 text-muted">Products already used in an order can't be edited or deleted.</p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/client.js"></script>
+</body>
+</html>
