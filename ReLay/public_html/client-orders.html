@@ -46,7 +46,7 @@
           <form id="new-order-form" class="card" action="client-orders.html" method="post">
             <h2 class="card-title" id="new-order">New order</h2>
 
-            <p class="dot-label"><span class="legend-dot orange"></span>Origin (GPS coordinates)</p>
+            <p class="dot-label"><span class="legend-dot blue"></span>Origin (GPS coordinates)</p>
             <div class="form-grid mt-12">
               <div class="field">
                 <label for="o-lat">Latitude *</label>
@@ -65,7 +65,7 @@
               <div class="field">
                 <label for="d-lat">Latitude *</label>
                 <input class="input white" id="d-lat" name="dest_lat" value="41.1527" inputmode="decimal"
-                       data-number required>
+                       data-number min="-90" max="90" required>
               </div>
               <div class="field">
                 <label for="d-lng">Longitude *</label>
@@ -108,7 +108,7 @@
             <h2 class="card-title">Route on map</h2>
             <div class="map leaflet-map order-map"
                  data-origin="41.1780,-8.5980" data-dest="41.1527,-8.6370"
-                 data-origin-label="FEUP" data-dest-label="Campo Alegre"
+                 data-origin-label="FEUP" data-origin-color="#2563eb" data-dest-label="Campo Alegre"
                  data-inputs="o-lat,o-lng,d-lat,d-lng"
                  role="region" aria-label="Map of the new order, from FEUP to Campo Alegre">
               <noscript>Turn on JavaScript to see the map.</noscript>
@@ -146,6 +146,39 @@
       </main>
     </div>
   </div>
+
+  <dialog class="modal" id="track-order" aria-labelledby="track-title">
+    <div class="modal-head">
+      <span class="modal-icon" aria-hidden="true">⌖</span>
+      <div>
+        <h2 id="track-title">Track your order</h2>
+        <p>Track your delivery status and the courier's last shared location.</p>
+      </div>
+      <button type="button" class="modal-close" data-close aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="oc-head"><h3 data-track-title>Order</h3><span class="badge badge-blue">● In Progress</span></div>
+      <div class="map leaflet-map track-map" role="region" aria-label="Map with the courier's last shared location"></div>
+      <div class="request-box" data-request aria-live="polite">
+        <div><strong></strong><small></small></div>
+        <button type="button" class="btn btn-primary" data-request-btn>⌖ Request location</button>
+      </div>
+      <div data-track-steps></div>
+      <dl class="detail-grid" data-track-details></dl>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="order-details" aria-labelledby="details-title">
+    <div class="modal-head">
+      <span class="modal-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+      <div>
+        <h2 id="details-title">Order details</h2>
+        <p data-details-sub></p>
+      </div>
+      <button type="button" class="modal-close" data-close aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" data-details-body></div>
+  </dialog>
 
   <script src="js/leaflet/leaflet.js"></script>
   <script src="js/map.js"></script>

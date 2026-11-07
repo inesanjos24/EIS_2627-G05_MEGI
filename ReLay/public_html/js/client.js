@@ -203,7 +203,7 @@
         var p = product(l.ref);
         return '<li class="product-line" data-ref="' + l.ref + '">' +
           '<span class="stepper">' +
-            '<button type="button" class="qty-btn" data-step="-1" aria-label="One less ' + esc(p.description) + '"' + "" + ">−</button>" +
+            '<button type="button" class="qty-btn" data-step="-1" aria-label="One less ' + esc(p.description) + '"' + (l.qty <= 1 ? " disabled" : "") + ">−</button>"
             '<span class="qty">' + l.qty + "</span>" +
             '<button type="button" class="qty-btn" data-step="1" aria-label="One more ' + esc(p.description) + '">+</button>' +
           "</span>" +
@@ -228,7 +228,7 @@
       var item = orderLines.filter(function (l) { return l.ref === line.getAttribute("data-ref"); })[0];
       var step = e.target.closest("[data-step]");
       if (step) {
-        item.qty = item.qty + Number(step.getAttribute("data-step"));
+        item.qty = Math.max(1, item.qty + Number(step.getAttribute("data-step")));
       } else if (e.target.closest(".remove")) {
         orderLines.splice(orderLines.indexOf(item), 1);
       } else {

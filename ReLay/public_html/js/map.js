@@ -91,6 +91,7 @@
 
     var originLabel = el.getAttribute("data-origin-label") || "Origin";
     var destLabel = el.getAttribute("data-dest-label") || "Destination";
+    var originColor = el.getAttribute("data-origin-color") || ORANGE;
     var start = { origin: origin, dest: dest };
 
     // Route info lives in the same card, or (courier page) elsewhere on the page
@@ -102,7 +103,7 @@
     L.tileLayer(TILES, { maxZoom: 19, attribution: ATTRIBUTION }).addTo(map);
 
     var line = L.polyline([origin, dest], { color: BLUE, weight: 4, opacity: 0.9 }).addTo(map);
-    var originMarker = makeMarker(origin, ORANGE, "Origin: " + originLabel).addTo(map);
+       var originMarker = makeMarker(origin, originColor, "Origin: " + originLabel).addTo(map);
     var destMarker = makeMarker(dest, BLUE, "Destination: " + destLabel).addTo(map);
     var stops = L.layerGroup().addTo(map);   // intermediate stops of a consolidated route
     var waypoints = null;                    // null = just origin -> destination
