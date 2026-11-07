@@ -180,6 +180,120 @@
     });
   });
   
+  var orderForm = $("#new-order-form");
+  var savedSelect = $("#saved-product");
+
+  function fillSavedProducts() {
+    if (!savedSelect) { return; }
+    savedSelect.innerHTML = '<option value="">Choose a product…</option>' +
+      D.clientProducts.map(function (p) {
+        return '<option value="' + p.ref + '">' + esc(p.description) + " — " + kg(p.weight_kg) + "</option>";
+      }).join("");
+  }
+
+  if (orderForm) {
+    var lines = $("[data-order-lines]", orderForm);
+    var summary = $("[data-order-summary]", orderForm);
+    var qtyInput = $("#qty");
+    var START_LINES = [{ ref: "P-003", qty: 1 }];   // as in the mock-up: one shoe box
+    var orderLines = [];
+
+    function renderLines() {
+      lines.innerHTML = orderLines.map(function (l) {
+        var p = product(l.ref);
+        return '<li class="product-line" data-ref="' + l.ref + '">' +
+          '<span class="stepper">' +
+            '<button type="button" class="qty-btn" data-step="-1" aria-label="One less ' + esc(p.description) + '"' + "" + ">−</button>" +
+            '<span class="qty">' + l.qty + "</span>" +
+            '<button type="button" class="qty-btn" data-step="1" aria-label="One more ' + esc(p.description) + '">+</button>' +
+          "</span>" +
+          '<span class="name">' + esc(p.description) + "</span>" +
+          '<span class="meta">' + kg(l.qty * p.weight_kg) + " · " + m3(l.qty * p.volume_m3) + "</span>" +
+          '<button type="button" class="remove" aria-label="Remove ' + esc(p.description) + '">×</button></li>';
+      }).join("");
+      var t = totals({ items: orderLines });
+      summary.textContent = t.items ? totalsText(t) : "No products yet";
+      if (t.items) { V.clearError(savedSelect); }
+    }
+
+    function resetLines() {
+      orderLines = START_LINES.map(function (l) { return { ref: l.ref, qty: l.qty }; });
+      renderLines();
+    }
+
+    // − / + / × on a product line
+    lines.addEventListener("click", function (e) {
+      var line = e.target.closest(".product-line");
+      if (!line) { return; }
+      var item = orderLines.filter(function (l) { return l.ref === line.getAttribute("data-ref"); })[0];
+      var step = e.target.closest("[data-step]");
+      if (step) {
+        item.qty = item.qty + Number(step.getAttribute("data-step"));
+      } else if (e.target.closest(".remove")) {
+        orderLines.splice(orderLines.indexOf(item), 1);
+      } else {
+        return;
+      }
+      renderLines();
+    });
+
+    // "Add to order" from the saved products
+    $("#add-to-order").addEventListener("click", function () {
+      V.clearError(savedSelect);
+      V.clearError(qtyInput);
+      var q = V.toNumber(qtyInput.value);
+      var ok = true;
+      if (!savedSelect.value) { V.showError(savedSelect, "Choose a saved product first"); ok = false; }
+      if (!(q >= 1) || Math.floor(q) !== q) { V.showError(qtyInput, "Quantity must be a whole number of at least 1"); ok = false; }
+      if (!ok) { return; }
+      var existing = orderLines.filter(function (l) { return l.ref === savedSelect.value; })[0];
+      if (existing) { existing.qty += q; } else { orderLines.push({ ref: savedSelect.value, qty: q }); }
+      savedSelect.value = "";
+      qtyInput.value = 1;
+      renderLines();
+    });
+
+    // extra rules: at least one product, origin and destination can't be the same point
+    V.addRule(orderForm, function () {
+      var problems = [];
+      if (!orderLines.length) {
+        problems.push({ el: savedSelect, message: "Add at least one product to the order" });
+      }
+      var same = ["lat", "lng"].every(function (k) {
+        return V.toNumber($("#o-" + k).value) === V.toNumber($("#d-" + k).value);
+      });
+      if (same && $("#o-lat").value.trim() !== "") {
+        problems.push({ message: "The destination must be different from the origin." });
+      }
+      return problems;
+    });
+
+    orderForm.addEventListener("relay:valid", function (e) {
+      var id = Math.max.apply(null, D.clientOrders.map(function (o) { return o.id; })) + 1;
+      var fieldText = function (name) {
+        var el = $('[data-field="' + name + '"]');
+        return el ? el.textContent : "Selected point";
+      };
+      D.clientOrders.unshift({
+        id: id, status: "initiated", created_at: "Today, " + nowTime(), updated: "Today, " + nowTime(),
+        origin: { name: fieldText("origin-name"), lat: V.toNumber($("#o-lat").value), lng: V.toNumber($("#o-lng").value) },
+        dest: { name: fieldText("dest-name"), lat: V.toNumber($("#d-lat").value), lng: V.toNumber($("#d-lng").value) },
+        items: orderLines.map(function (l) { return { ref: l.ref, qty: l.qty }; }),
+        courier: null, vehicle: null
+      });
+      renderActive();
+      renderKpis();
+      e.detail.message = "Order #" + id + " submitted with status \"Initiated\". It appears in your active orders and stays \"Waiting for a courier\" until a courier accepts it.";
+      var card = $("#order-" + id);
+      if (card) { card.classList.add("row-new"); }
+    });
+
+    // Cancel (reset) brings back the coordinates and the products of the mock-up
+    orderForm.addEventListener("reset", function () { setTimeout(resetLines, 0); });
+
+    resetLines();
+  }
+  
   var productForm = $("#product-form");
   var productTable = $('[data-render="client-products"]');
   var editingRef = null;
@@ -500,6 +614,7 @@
   renderHistory();
   renderKpis();
   renderProducts();
+  fillSavedProducts();
 })();
 
 
