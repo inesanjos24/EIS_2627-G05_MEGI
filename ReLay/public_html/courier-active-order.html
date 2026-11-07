@@ -114,6 +114,38 @@
                             <p class="mt-14 note note-amber" data-status-note>Order accepted. Press <strong>Start delivery</strong> when you collect the products.</p>
                         </section>
                     </section>
+                    <!-- Client requested a location requests-->
+                    <form class="card" id="location-form" action="courier-active-order.html" method="post" data-keep-values>
+                      <div class="card-head">
+                        <h2 class="card-title">Location requests <span class="badge badge-amber" data-location-badge>1 pending</span></h2>
+                      </div>
+                      <p class="card-sub">Clients can ask where their order is. Reply with your most recent location — it is shown on the client's map.</p>
+
+                      <div class="location-request" data-location-request>
+                        <span class="loc-icon" aria-hidden="true">⌖</span>
+                        <div>
+                          <strong>Ana Ferreira asked for your current location</strong>
+                          <small>Order 1042 • Requested today at 11:05</small>
+                        </div>
+                      </div>
+
+                      <div class="loc-grid">
+                        <div class="field">
+                          <label for="loc-lat">Latitude *</label>
+                          <input class="input" type="text" inputmode="decimal" id="loc-lat" name="courier_lat" data-number min="-90" max="90" placeholder="-90 to 90" required>
+                        </div>
+                        <div class="field">
+                          <label for="loc-lng">Longitude *</label>
+                          <input class="input" type="text" inputmode="decimal" id="loc-lng" name="courier_long" data-number min="-180" max="180" placeholder="-180 to 180" required>
+                        </div>
+                        <div class="m-0 form-actions">
+                          <button type="button" class="btn btn-outline" id="use-location">Use my location</button>
+                          <button type="submit" class="btn btn-primary">Send location</button>
+                        </div>
+                      </div>
+                      <p class="text-sm mt-12 text-muted">Latitude must be between −90 and 90 and longitude between −180 and 180. Empty or non-numeric values block the submission.</p>
+                      <p class="text-sm mt-6 fw-500" data-last-location>Last location sent: today at 10:42 • 41.1702, −8.6012</p>
+                    </form>
 
                     <!-- add the proof of delivery (e-pod) with client signature and all -->
                     <form class="card" id="epod" action="courier-active-order.html#completed" method="post" data-success="Proof of delivery submitted.">

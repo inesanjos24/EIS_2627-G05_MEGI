@@ -804,6 +804,72 @@
     });
   }
 
+  /* =======================================================
+     7b. Courier: answer a client's location request
+     The client asks where the order is; the courier sends his
+     most recent position (typed, or read from the device with
+     the browser's Geolocation API). It appears on the map.
+     ======================================================= */
+  var locationForm = $("#location-form");
+  if (locationForm) {
+    var latInput = $("#loc-lat");
+    var lngInput = $("#loc-lng");
+    var useBtn = $("#use-location");
+    var lastSent = $("[data-last-location]");
+
+    function now() {
+      var d = new Date();
+      return (d.getHours() < 10 ? "0" : "") + d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes();
+    }
+
+    // "Use my location": asks the browser for the device position
+    if (useBtn) {
+      useBtn.addEventListener("click", function () {
+        if (!navigator.geolocation) {
+          V.showError(latInput, "This browser can't read your location — type it instead");
+          return;
+        }
+        useBtn.disabled = true;
+        useBtn.textContent = "Locating…";
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          latInput.value = pos.coords.latitude.toFixed(4);
+          lngInput.value = pos.coords.longitude.toFixed(4);
+          V.clearError(latInput);
+          V.clearError(lngInput);
+          useBtn.disabled = false;
+          useBtn.textContent = "Use my location";
+        }, function () {
+          V.showError(latInput, "Location not available (permission denied?) — type it instead");
+          useBtn.disabled = false;
+          useBtn.textContent = "Use my location";
+        }, { timeout: 8000 });
+      });
+    }
+
+    // valid form: mark the request as answered and show the position on the map
+    locationForm.addEventListener("relay:valid", function (e) {
+      var lat = V.toNumber(latInput.value);
+      var lng = V.toNumber(lngInput.value);
+      var time = now();
+      var request = $("[data-location-request]");
+      var badge = $("[data-location-badge]");
+      if (request) {
+        request.classList.add("answered");
+        $("small", request).textContent = "Answered today at " + time;
+      }
+      if (badge) {
+        badge.className = "badge badge-green";
+        badge.textContent = "✓ Answered";
+      }
+      if (lastSent) {
+        lastSent.textContent = "Last location sent: today at " + time + " • " + lat.toFixed(4) + ", " + lng.toFixed(4);
+      }
+      var mapEl = $(".leaflet-map");
+      if (mapEl && mapEl.relaySetCourier) { mapEl.relaySetCourier(lat, lng, "You • shared at " + time); }
+      e.detail.message = "Location sent at " + time + ". The client now sees it on the map.";
+    });
+  }
+
   /* 
      8. Courier vehicle forms
      - register a new vehicle (goes to Staff as "pending")
