@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Client area: place a delivery order with GPS coordinates, follow active orders and see the order history.">
+  <meta name="author" content="Group 05-Enterprise Information Systems 2026/2027, FEUP">
+  <title>My orders - Relay</title>
+  <link rel="icon" href="data:,">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="js/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <aside class="sidebar">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+        <span class="logo-text">Re<span>lay</span></span>
+      </a>
+      <nav class="side-nav">
+        <a href="client-orders.html" class="active">Orders</a>
+        <a href="client-products.html">Products</a>
+        <a href="client-profile.html">Profile</a>
+      </nav>
+      <a href="login.html" class="logout">← Log out</a>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <h1>My orders</h1>
+        <div class="user-box">
+          <span class="alerts-pill" title="Order updates today">2 alerts</span>
+          <span class="avatar"></span>
+          <span class="who"><strong data-client-name>Ana Ferreira</strong><small>Client</small></span>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="grid-side-main">
+
+          <form id="new-order-form" class="card" action="client-orders.html" method="post">
+            <h2 class="card-title" id="new-order">New order</h2>
+
+            <p class="dot-label"><span class="legend-dot orange"></span>Origin (GPS coordinates)</p>
+            <div class="form-grid mt-12">
+              <div class="field">
+                <label for="o-lat">Latitude *</label>
+                <input class="input white" id="o-lat" name="origin_lat" value="41.1780" inputmode="decimal"
+                       data-number min="-90" max="90" required>
+              </div>
+              <div class="field">
+                <label for="o-lng">Longitude *</label>
+                <input class="input white" id="o-lng" name="origin_long" value="-8.5980" inputmode="decimal"
+                       data-number min="-180" max="180" required>
+              </div>
+            </div>
+
+            <p class="dot-label mt-16"><span class="legend-dot blue"></span>Destination (GPS coordinates)</p>
+            <div class="form-grid mt-12">
+              <div class="field">
+                <label for="d-lat">Latitude *</label>
+                <input class="input white" id="d-lat" name="dest_lat" value="41.1527" inputmode="decimal"
+                       data-number required>
+              </div>
+              <div class="field">
+                <label for="d-lng">Longitude *</label>
+                <input class="input white" id="d-lng" name="dest_long" value="-8.6370" inputmode="decimal"
+                       data-number min="-180" max="180" required>
+              </div>
+            </div>
+
+            <div class="line-head mt-20">
+              <span>Products in this order *</span>
+              <strong data-order-summary aria-live="polite">No products yet</strong>
+            </div>
+            <ul class="product-lines" data-order-lines></ul>
+
+            <div class="subbox mt-14">
+              <h4>Add from your saved products</h4>
+              <div class="field">
+                <label for="saved-product">Saved product *</label>
+                <select class="select bg-white" id="saved-product" name="saved_product">
+                  <option value="">Choose a product…</option>
+                </select>
+              </div>
+              <div class="add-product-row mt-10">
+                <div class="field">
+                  <label for="qty">Qty</label>
+                  <input class="input white" type="number" id="qty" name="qty" value="1" min="1" step="1" data-int>
+                </div>
+                <button type="button" class="btn btn-primary" id="add-to-order">Add to order</button>
+              </div>
+              <p class="text-13 mt-10"><a href="client-products.html" class="link">Product not listed? Register it here</a></p>
+            </div>
+
+            <div class="form-actions order-form-actions">
+              <button type="submit" class="btn btn-primary">Submit order</button>
+              <button type="reset" class="btn btn-danger">Cancel</button>
+            </div>
+          </form>
+
+          <section class="card">
+            <h2 class="card-title">Route on map</h2>
+            <div class="map leaflet-map order-map"
+                 data-origin="41.1780,-8.5980" data-dest="41.1527,-8.6370"
+                 data-origin-label="FEUP" data-dest-label="Campo Alegre"
+                 data-inputs="o-lat,o-lng,d-lat,d-lng"
+                 role="region" aria-label="Map of the new order, from FEUP to Campo Alegre">
+              <noscript>Turn on JavaScript to see the map.</noscript>
+            </div>
+            <p class="map-hint">Click the map to choose the destination, Shift + click to choose the origin.</p>
+            <div class="tiles" data-route-info>
+              <div class="tile">Origin<strong data-field="origin-name">FEUP</strong><span class="coords" data-field="origin-coords">41.1780, −8.5980</span></div>
+              <div class="tile">Destination<strong data-field="dest-name">Campo Alegre</strong><span class="coords" data-field="dest-coords">41.1527, −8.6370</span></div>
+              <div class="tile">Distance<strong data-field="distance">–</strong><span class="coords" data-field="distance-note">km</span></div>
+            </div>
+          </section>
+        </section>
+
+        <section class="card" id="active">
+          <h2 class="card-title">Active orders</h2>
+          <div class="order-cards" data-render="client-active-orders" aria-live="polite"></div>
+          <p class="empty-note" data-empty hidden>You have no active orders.</p>
+          <noscript><p class="empty-note">Turn on JavaScript to see your orders.</p></noscript>
+        </section>
+
+        <section class="card" id="history">
+          <div class="card-head">
+            <h2 class="card-title">Order history</h2>
+            <button type="button" class="btn-link text-13" data-toggle-history>View all orders</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr><th>No.</th><th>Date</th><th>Destination</th><th>Courier</th><th>e-POD</th><th>Status</th><th>Details</th></tr>
+              </thead>
+              <tbody data-render="client-history" data-limit="3"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/leaflet/leaflet.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/client.js"></script>
+</body>
+</html>
