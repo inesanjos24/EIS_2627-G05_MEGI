@@ -206,6 +206,89 @@
     $("#product-submit").textContent = "+ Add product";
   }
   
+  if (productForm) {
+    // the same description can't be registered twice
+    V.addRule(productForm, function () {
+      var name = $("#p-desc").value.trim().toLowerCase();
+      var dup = D.clientProducts.some(function (p) { return p.description.toLowerCase() === name; });
+      return dup && name ? [{ el: $("#p-desc"), message: "You already have a product with this description" }] : [];
+    });
+
+    productForm.addEventListener("relay:valid", function (e) {
+      var last = D.clientProducts.length ? Number(D.clientProducts[D.clientProducts.length - 1].ref.slice(2)) : 0;
+      var p = {
+        ref: "P-" + ("00" + (last + 1)).slice(-3),
+        description: $("#p-desc").value.trim(),
+        category: $("#p-cat").value,
+        weight_kg: V.toNumber($("#p-weight").value),
+        volume_m3: V.toNumber($("#p-vol").value),
+        created_at: new Date().toLocaleDateString("pt-PT")
+      };
+      D.clientProducts.push(p);
+      e.detail.message = "\"" + p.description + "\" registered as " + p.ref + ". You can now add it to your orders.";
+      renderProducts();
+      renderKpis();
+    });
+  }
+
+  // pop-up "Edit product" (only for products not used in any order)
+  var editDialog = $("#edit-product");
+  var editForm = $("#edit-product-form");
+
+  function openEditProduct(p) {
+    editingRef = p.ref;
+    // clean the errors left from the last time the pop-up was open
+    $all(".form-alert", editForm).forEach(function (box) { box.remove(); });
+    $all("input, select", editForm).forEach(function (el) { V.clearError(el); });
+    $("[data-edit-sub]").textContent = p.ref + " · registered on " + p.created_at;
+    $("#ep-desc").value = p.description;
+    $("#ep-cat").value = p.category;
+    $("#ep-weight").value = p.weight_kg;
+    $("#ep-vol").value = p.volume_m3;
+    openDialog(editDialog);
+    $("#ep-desc").focus();
+  }
+
+  if (editForm) {
+    V.addRule(editForm, function () {
+      var name = $("#ep-desc").value.trim().toLowerCase();
+      var dup = D.clientProducts.some(function (p) { return p.ref !== editingRef && p.description.toLowerCase() === name; });
+      return dup && name ? [{ el: $("#ep-desc"), message: "You already have a product with this description" }] : [];
+    });
+
+    editForm.addEventListener("relay:valid", function (e) {
+      var p = product(editingRef);
+      p.description = $("#ep-desc").value.trim();
+      p.category = $("#ep-cat").value;
+      p.weight_kg = V.toNumber($("#ep-weight").value);
+      p.volume_m3 = V.toNumber($("#ep-vol").value);
+      e.detail.message = null;   // no message: the pop-up closes and the table shows the change
+      closeDialog(editDialog);
+      renderProducts();
+      renderKpis();
+    });
+
+    editDialog.addEventListener("close", stopEditing);
+  }
+
+  // Edit / Delete buttons in the table
+  if (productTable) {
+    productTable.addEventListener("click", function (e) {
+      var edit = e.target.closest("[data-edit]");
+      var del = e.target.closest("[data-delete]");
+      if (edit && editForm) {
+        openEditProduct(product(edit.getAttribute("data-edit")));
+      }
+      if (del) {
+        var d = product(del.getAttribute("data-delete"));
+        if (window.confirm("Delete \"" + d.description + "\" (" + d.ref + ")?")) {
+          D.clientProducts.splice(D.clientProducts.indexOf(d), 1);
+          renderProducts();
+        }
+      }
+    });
+  }
+  
     function openDialog(dialog) {
     if (dialog.showModal) { dialog.showModal(); } else { dialog.setAttribute("open", ""); }
   }

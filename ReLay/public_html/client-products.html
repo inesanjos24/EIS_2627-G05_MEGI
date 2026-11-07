@@ -125,6 +125,59 @@
       </main>
     </div>
   </div>
+    
+  <dialog class="modal" id="edit-product" aria-labelledby="edit-product-title">
+    <div class="modal-head">
+      <span class="modal-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 3h9l-.6 6.2a3.9 3.9 0 0 1-7.8 0z"/><path d="M12 13.2V20M8.5 21h7"/></svg></span>
+      <div>
+        <h2 id="edit-product-title">Edit product</h2>
+        <p data-edit-sub></p>
+      </div>
+      <button type="button" class="modal-close" data-close aria-label="Close">✕</button>
+    </div>
+    <form id="edit-product-form" method="post">
+      <div class="form-grid">
+        <div class="field">
+          <label for="ep-desc">Description *</label>
+          <input class="input white" id="ep-desc" name="description" maxlength="60" required>
+        </div>
+        <div class="field">
+          <label for="ep-cat">Category *</label>
+          <select class="select bg-white" id="ep-cat" name="category" required>
+                <option value="">Select</option>
+                <option>Documents</option>
+                <option>Electronics</option>
+                <option>Footwear</option>
+                <option>Clothing</option>
+                <option>Home &amp; decor</option>
+                <option>Food (non-perishable)</option>
+                <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ep-weight">Weight (kg) *</label>
+          <div class="input-wrap">
+            <input class="input white" id="ep-weight" name="weight_kg" inputmode="decimal"
+                   min="0" max="3500" data-number data-gt="0" required>
+            <span class="suffix">kg</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="ep-vol">Volume (m³) *</label>
+          <div class="input-wrap">
+            <input class="input white" id="ep-vol" name="volume_m3" inputmode="decimal"
+                   min="0" max="20" data-number data-gt="0" required>
+            <span class="suffix">m³</span>
+          </div>
+        </div>
+      </div>
+      <p class="note note-blue mt-16">This product hasn't been used in any order yet, so it can still be edited. Products used in orders are locked to keep the order history correct.</p>
+      <div class="form-actions modal-actions">
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-danger" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="js/data.js"></script>
   <script src="js/validation.js"></script>

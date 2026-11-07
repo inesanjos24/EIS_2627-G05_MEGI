@@ -1485,3 +1485,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .loc-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: end; margin-top: 14px; }
 .loc-grid .form-alert { grid-column: 1 / -1; order: 10; margin: 0; }   /* messages go below the fields */
 @media (max-width: 760px) { .loc-grid { grid-template-columns: 1fr 1fr; } .loc-grid .form-actions { grid-column: 1 / -1; } }
+
+/* Edit product pop-up */
+#edit-product .note { color: var(--gray-600); line-height: 1.45; }
+.modal-actions { justify-content: flex-end; }
