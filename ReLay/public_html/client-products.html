@@ -88,7 +88,7 @@
               <label for="p-weight">Weight (kg) *</label>
               <div class="input-wrap">
                 <input class="input white" id="p-weight" name="weight_kg" placeholder="0.0" inputmode="decimal"
-                       data-number min="0" max="3500" required>
+                       data-number data-gt="0" min="0" max="3500" required>
                 <span class="suffix">kg</span>
               </div>
             </div>
@@ -96,7 +96,7 @@
               <label for="p-vol">Volume (m³) *</label>
               <div class="input-wrap">
                 <input class="input white" id="p-vol" name="volume_m3" placeholder="0.00" inputmode="decimal"
-                       data-number min="0" max="20" required>
+                       data-number data-gt="0" min="0" max="20" required>
                 <span class="suffix">m³</span>
               </div>
             </div>

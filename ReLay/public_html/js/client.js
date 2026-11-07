@@ -284,6 +284,7 @@
         if (window.confirm("Delete \"" + d.description + "\" (" + d.ref + ")?")) {
           D.clientProducts.splice(D.clientProducts.indexOf(d), 1);
           renderProducts();
+          renderKpis();
         }
       }
     });
