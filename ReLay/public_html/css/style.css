@@ -384,13 +384,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
   gap: 24px 32px;
 }
 .bento-item { padding: 26px; }
-.bento-item.card-like {
+/* every block is a card, as in the Figma */
+.bento-item.card-like,
+.bento-item.plain {
   background: #fff;
   border: 1px solid var(--card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
 }
-.bento-item.plain { border-bottom: 1px solid #f0f2f6; }
 .bento-row2 { grid-template-columns: 1fr 2fr; margin-top: 24px; }
 .bento-icon {
   width: 38px; height: 38px;
