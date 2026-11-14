@@ -429,7 +429,7 @@
         initiated: current.label + " accepted. Press <strong>Start delivery</strong> when you collect the products.",
         progress: "Delivery in progress. To complete it, submit the proof of delivery (e-POD) below.",
         completed: current.label + " completed with e-POD. It now appears in your completed orders and in the client's order history.",
-        cancelled: current.label + " cancelled and returned to the available orders list."
+        cancelled: current.label + " cancelled (" + escapeHtml(lastReason) + ") and returned to the available orders list."
       }[key];
     }
 
@@ -473,8 +473,9 @@
     // 1st failure: it goes back to the top of the list as "attempt 2".
     // 2nd failure: it is cancelled and the client collects it at a Relay pickup point.
     var MAX_ATTEMPTS = 2;
+    var lastReason = "";   // reason of the failed attempt, chosen in the pop-up
 
-    function returnToList(row) {
+    function returnToList(row, reason) {
       var body = $("#available-body");
       if (!body) { return; }
       var attempt = Number(row.getAttribute("data-attempt") || 1);
@@ -489,14 +490,14 @@
             "</td><td>" + escapeHtml(v ? v.type + " • " + v.license_plate : "—") +
             '</td><td>—</td><td><span class="badge badge-red">Cancelled</span></td></tr>');
         }
-        note.innerHTML = "Order #" + no + ": " + MAX_ATTEMPTS + " delivery attempts failed. The order is cancelled and the client must collect it at a Relay pickup point.";
+        note.innerHTML = "Order #" + no + ": " + MAX_ATTEMPTS + " delivery attempts failed (reason: " + escapeHtml(reason) + "). The order is cancelled and the client must collect it at a Relay pickup point.";
         note.className = "note note-amber";
         return;
       }
 
       attempt = attempt + 1;
       row.setAttribute("data-attempt", attempt);
-      row.cells[1].innerHTML = "#" + no + ' <small class="text-muted">(attempt ' + attempt + ")</small>";
+      row.cells[1].innerHTML = "#" + no + ' <small class="text-muted">(attempt ' + attempt + " • " + escapeHtml(reason) + ")</small>";
       $("input", row).checked = false;
       row.classList.add("row-new");
       body.insertBefore(row, body.firstChild);
@@ -521,12 +522,53 @@
         setTimeout(function () { form.classList.remove("highlight"); }, 1500);
       }
     });
+    // Pop-up "Cancel delivery": the courier says why the delivery failed
+    var cancelDialog = $("#cancel-delivery");
+    var cancelForm = $("#cancel-delivery-form");
+
+    function closeCancel() {
+      if (cancelDialog.close) { cancelDialog.close(); } else { cancelDialog.removeAttribute("open"); }
+    }
+
     buttons.cancel.addEventListener("click", function () {
+      // attempt of this order (a route uses the highest one)
+      var attempt = 1;
+      (current.rows || []).forEach(function (r) { attempt = Math.max(attempt, Number(r.getAttribute("data-attempt") || 1)); });
+      if (!cancelDialog) { cancelOrder(""); return; }
+      var last = attempt >= MAX_ATTEMPTS;
+      $("[data-cancel-sub]", cancelDialog).textContent = current.label + " • Attempt " + attempt + " of " + MAX_ATTEMPTS;
+      // two versions of the pop-up (Figma): attempt 1 = amber note, last attempt = red note
+      var cancelNote = $("[data-cancel-note]", cancelDialog);
+      cancelNote.textContent = last
+        ? "This is the last attempt. The order will be cancelled and the client notified."
+        : "The order goes back to the available orders list for attempt " + (attempt + 1) + ".";
+      cancelNote.className = "note mt-16 " + (last ? "note-red" : "note-amber");
+      // clean what was left from the last time the pop-up was open
+      $all(".form-alert", cancelForm).forEach(function (box) { box.remove(); });
+      V.clearError($("#cancel-reason"));
+      $("#cancel-reason").value = "";
+      if (cancelDialog.showModal) { cancelDialog.showModal(); } else { cancelDialog.setAttribute("open", ""); }
+      $("#cancel-reason").focus();
+    });
+
+    if (cancelDialog) {
+      $all("[data-close]", cancelDialog).forEach(function (btn) { btn.addEventListener("click", closeCancel); });
+      // click on the dark background closes it too
+      cancelDialog.addEventListener("click", function (e) { if (e.target === cancelDialog) { closeCancel(); } });
+      cancelForm.addEventListener("relay:valid", function (e) {
+        e.detail.message = null;   // no message: the pop-up closes and the card shows the change
+        closeCancel();
+        cancelOrder($("#cancel-reason").value);
+      });
+    }
+
+    function cancelOrder(reason) {
+      lastReason = reason;
       state = "cancelled";
       render();
       // statement: "Upon cancellation, the order returns to the list of orders"
       if (current.rows) {
-        current.rows.slice().reverse().forEach(returnToList);
+        current.rows.slice().reverse().forEach(function (r) { returnToList(r, reason); });
       } else if (mapEl) {
         // the first order (#1042) wasn't in the table: build its row from the card
         var row = document.createElement("tr");
@@ -541,9 +583,9 @@
         row.innerHTML = '<td><input type="checkbox" name="orders" value="' + firstNo + '" aria-label="Select order ' + firstNo +
           '" class="accent-blue"></td><td>#' + firstNo + "</td><td>" + escapeHtml(row.getAttribute("data-from") + " → " + row.getAttribute("data-to")) +
           "</td><td>2 items</td><td>" + flow.getAttribute("data-weight") + " kg • " + Number(flow.getAttribute("data-volume")).toFixed(3) + " m³</td>";
-        returnToList(row);
+        returnToList(row, reason);
       }
-    });
+    }
 
     render();
 

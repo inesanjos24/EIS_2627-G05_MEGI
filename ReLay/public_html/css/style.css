@@ -1491,6 +1491,20 @@ button, input, select, textarea { font: inherit; color: inherit; }
 #edit-product .note { color: var(--gray-600); line-height: 1.45; }
 .modal-actions { justify-content: flex-end; }
 
+/* Cancel delivery pop-up (courier) — sizes from the Figma frames (attempt 1 and 2) */
+#cancel-delivery { padding: 32px; }
+#cancel-delivery .modal-head { margin-bottom: 24px; }
+#cancel-delivery .modal-head h2 { font-size: 24px; }
+#cancel-delivery .modal-head p { margin-top: 4px; font-size: 15px; color: #5c6678; }
+#cancel-delivery .field label { font-size: 13px; color: var(--gray-600); }
+#cancel-delivery .select { height: 44px; padding-left: 14px; border-color: #ccd1d9; border-radius: 10px; font-size: 14px; }
+#cancel-delivery .field.error .select { border-color: var(--red); }
+#cancel-delivery .note { margin-top: 16px; padding: 10px 12px; border-radius: 8px; font-size: 13px; background: #fff2d9; border-color: #fadba8; color: #cc7305; }
+#cancel-delivery .note.note-red { background: #fceded; border: 1px solid #f5c7c7; color: #bf1f1f; }   /* last attempt */
+#cancel-delivery .modal-actions { margin-top: 24px; }
+#cancel-delivery .modal-actions .btn { height: 44px; padding: 0 20px; border-radius: 10px; font-size: 15px; }
+#cancel-delivery .modal-actions .btn-outline { border-width: 1.5px; }
+
 /* =========================================================
    TRACK ORDER PAGE (track-order.html)
    ========================================================= */

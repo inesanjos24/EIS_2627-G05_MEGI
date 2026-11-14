@@ -240,6 +240,35 @@
                 </main>
             </div>
         </div>
+        <!-- Pop-up "Cancel delivery": asks the reason of the failed attempt (UML: Delivery Attempt.reason).
+             Attempt 1: amber note (back to the list) — attempt 2: red note (last attempt) -->
+        <dialog class="modal" id="cancel-delivery" aria-labelledby="cancel-delivery-title">
+            <div class="modal-head">
+                <span class="modal-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7 12 12l8.7-5M12 22V12"/></svg></span>
+                <div>
+                    <h2 id="cancel-delivery-title">Cancel delivery</h2>
+                    <p data-cancel-sub></p>
+                </div>
+                <button type="button" class="modal-close" data-close aria-label="Close">✕</button>
+            </div>
+            <form id="cancel-delivery-form" method="post" data-no-alert>
+                <div class="field">
+                    <label for="cancel-reason">Why did the delivery fail? *</label>
+                    <select class="select bg-white" id="cancel-reason" name="reason" required>
+                        <option value="">Select a reason</option>
+                        <option>Client not home</option>
+                        <option>Wrong address</option>
+                        <option>Refused by client</option>
+                    </select>
+                </div>
+                <p class="note note-amber mt-16" data-cancel-note></p>
+                <div class="form-actions modal-actions">
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                    <button type="button" class="btn btn-outline" data-close>Back</button>
+                </div>
+            </form>
+        </dialog>
+
         <!-- Scripts at the end of <body>, so the HTML is loaded first -->
         <script src="js/leaflet/leaflet.js"></script>
         <script src="js/map.js"></script>
@@ -247,6 +276,4 @@
         <script src="js/validation.js"></script>
         <script src="js/app.js"></script>
     </body>        
-            
-  
 </html>
