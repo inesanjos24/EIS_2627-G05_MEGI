@@ -45,4 +45,4 @@ The maps and fonts need internet.
 
 ## Conceptual model
 
-`relay_class_diagram_v3.png` – UML class diagram used as the conceptual (ER) model.
+`relay_class_diagram_v5.png` – UML class diagram used as the conceptual (ER) model.
