@@ -154,7 +154,7 @@
       origin: { name: "FEUP", lat: 41.1780, lng: -8.5980 },
       dest: { name: "Av. dos Aliados", lat: 41.1496, lng: -8.6110 },
       items: [{ ref: "P-002", qty: 1 }, { ref: "P-003", qty: 1 }],
-      courier: "João Silva", vehicle: "Van · AA-12-BC", eta: "Today, 11:30",
+      courier: "João Silva", vehicle: "Moto · 45-ZZ-11", eta: "Today, 11:30",
       // last location shared by the courier (he answers the client's request)
       lastLocation: { lat: 41.1630, lng: -8.6045, place: "Rua de Costa Cabral, Porto", at: "10:58" } },
 
