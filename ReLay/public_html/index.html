@@ -200,7 +200,7 @@
         <div class="track-box">
           <h2>Track Your Order</h2>
           <p>Enter your order number to see its current status and assigned courier.</p>
-          <form class="track-form" action="client-orders.html#status" method="get" data-no-alert>
+          <form class="track-form" action="track-order.html" method="get" data-no-alert>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
             <label for="tracking" hidden>Order number</label>
             <input type="text" id="tracking" name="tracking" placeholder="e.g. 1042" inputmode="numeric" pattern="#?[0-9]{4,6}" data-error="Order numbers have 4 to 6 digits, e.g. 1042" required>
@@ -281,5 +281,6 @@
   <script src="js/data.js"></script>
   <script src="js/validation.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/track.js"></script>
 </body>
 </html>
