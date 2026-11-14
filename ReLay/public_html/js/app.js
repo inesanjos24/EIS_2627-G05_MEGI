@@ -469,12 +469,32 @@
       return (point[0].toFixed(4) + ", " + point[1].toFixed(4)).replace(/-/g, "−") + " (" + name + ")";
     }
 
-    // A cancelled order goes back to the top of the list with one more attempt (ER: Order.attempt)
+    // Group rule: an order has at most 2 delivery attempts (ER: Delivery Attempt 0..2).
+    // 1st failure: it goes back to the top of the list as "attempt 2".
+    // 2nd failure: it is cancelled and the client collects it at a Relay pickup point.
+    var MAX_ATTEMPTS = 2;
+
     function returnToList(row) {
       var body = $("#available-body");
       if (!body) { return; }
-      var attempt = Number(row.getAttribute("data-attempt") || 1) + 1;
+      var attempt = Number(row.getAttribute("data-attempt") || 1);
       var no = $("input", row).value;
+
+      if (attempt >= MAX_ATTEMPTS) {
+        var done = $("#completed-body");
+        var v = selectedVehicle();
+        if (done) {
+          done.insertAdjacentHTML("afterbegin",
+            '<tr class="row-new"><td>#' + no + "</td><td>" + today() + "</td><td>" + escapeHtml(row.getAttribute("data-to") || "—") +
+            "</td><td>" + escapeHtml(v ? v.type + " • " + v.license_plate : "—") +
+            '</td><td>—</td><td><span class="badge badge-red">Cancelled</span></td></tr>');
+        }
+        note.innerHTML = "Order #" + no + ": " + MAX_ATTEMPTS + " delivery attempts failed. The order is cancelled and the client must collect it at a Relay pickup point.";
+        note.className = "note note-amber";
+        return;
+      }
+
+      attempt = attempt + 1;
       row.setAttribute("data-attempt", attempt);
       row.cells[1].innerHTML = "#" + no + ' <small class="text-muted">(attempt ' + attempt + ")</small>";
       $("input", row).checked = false;
