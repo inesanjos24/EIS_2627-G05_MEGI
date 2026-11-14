@@ -1,5 +1,5 @@
 /* =========================================================
-   Relay — client-side form validation
+   Relay client-side form validation
    ---------------------------------------------------------
    Runs on every <form> of the site. When a form is submitted:
      1. every field is checked (empty required fields, numbers and
@@ -155,8 +155,8 @@
 
     if (type === "number" || input.hasAttribute("data-number")) {
       var n = toNumber(value);
-      var min = input.getAttribute("min");
-      var max = input.getAttribute("max");
+      var min = input.getAttribute("data-min") || input.getAttribute("min");
+      var max = input.getAttribute("data-max") || input.getAttribute("max");
       var gt = input.getAttribute("data-gt");
       var range = min !== null && max !== null
         ? " between " + pretty(min) + " and " + pretty(max) : "";

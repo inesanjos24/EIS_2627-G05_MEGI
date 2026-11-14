@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8"><!-- comment -->
+       
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Courier area: active order, route map, status updates and proof of delivery.">
         <meta name="author" content="Group 05-Enterprise Information Systems 2026/2027, FEUP">
-        <title>Active order - ReLay</title>
+        <title>Active order - Relay</title>
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,7 +70,7 @@
                         </div>
                     </section>
                     <!--Map + order-->
-                    <section class="grid-main-side">
+                    <div class="grid-main-side">
 
                         <!-- Map (statement 2.2: Leaflet.js + OpenStreetMap, marker on FEUP) -->
                         <section class="card">
@@ -113,7 +115,7 @@
                             </div>
                             <p class="mt-14 note note-amber" data-status-note>Order accepted. Press <strong>Start delivery</strong> when you collect the products.</p>
                         </section>
-                    </section>
+                    </div>
                     <!-- Client requested a location requests-->
                     <form class="card" id="location-form" action="courier-active-order.html" method="post" data-keep-values>
                       <div class="card-head">
@@ -132,11 +134,12 @@
                       <div class="loc-grid">
                         <div class="field">
                           <label for="loc-lat">Latitude *</label>
-                          <input class="input" type="text" inputmode="decimal" id="loc-lat" name="courier_lat" data-number min="-90" max="90" placeholder="-90 to 90" required>
+                          <input class="input" type="text" inputmode="decimal" id="loc-lat" name="courier_lat" data-number data-min="-90" data-max="90" placeholder="-90 to 90" required>
+                          
                         </div>
                         <div class="field">
                           <label for="loc-lng">Longitude *</label>
-                          <input class="input" type="text" inputmode="decimal" id="loc-lng" name="courier_long" data-number min="-180" max="180" placeholder="-180 to 180" required>
+                          <input class="input" type="text" inputmode="decimal" id="loc-lng" name="courier_long" data-number data-min="-180" data-max="180" placeholder="-180 to 180" required>
                         </div>
                         <div class="m-0 form-actions">
                           <button type="button" class="btn btn-outline" id="use-location">Use my location</button>
@@ -156,7 +159,7 @@
                             <div>
                                 <p class="label">Digital signature (Canvas)</p>
                                 <div class="signature-wrap">
-                                    <canvas class="signature-pad" id="signature" aria-label="Signature area: draw with the mouse or a finger"></canvas>
+                                    <canvas class="signature-pad" id="signature" role="img" aria-label="Signature area: draw with the mouse or a finger"></canvas>
                                     <span class="signature-placeholder" aria-hidden="true">Sign here with your mouse or finger</span>
                                 </div>
                                 <button type="button" class="mt-10 btn btn-outline" id="clear-signature">Clear signature</button>
